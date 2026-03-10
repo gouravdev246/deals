@@ -1,4 +1,4 @@
-const logout = async (req, res) => {
+const logoutUser = async (req, res) => {
     try {
         res.cookie('token', '', {
             httpOnly: true,
@@ -12,4 +12,4 @@ const logout = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 }
-module.exports = logout
+module.exports = logoutUser
