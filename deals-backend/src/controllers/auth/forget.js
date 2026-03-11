@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const User = require('../../model/user.model')
 const OTP = require('../../model/otp.model')
-
+const bcrypt = require("bcryptjs")
 const ForgetUser = async (req , res) =>{
     const {email , otp , password} = req.body 
     const user = await User.findOne({email})
