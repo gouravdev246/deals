@@ -1,1 +1,8 @@
-
+1. User Authentication ✅
+2. Add Product ✅
+3. Get All Products ✅
+4. Get One Product ✅
+5. Add Category ✅
+6. Delete Product 
+7. Update Product
+8. Chat Feature
