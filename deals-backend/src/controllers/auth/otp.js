@@ -41,7 +41,7 @@ const otpGenerator = async (req, res) => {
     </div>
     `
         });
-
+        res.status(200).send('OTP sent successfully');
 
 
     } catch (err) {
