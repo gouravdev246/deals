@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
-const Product = require("../../model/product.model")
+const Product = require("../../model/products.model")
 
 const getAllProducts = async (req , res)=>{
-       const page = parseInt(req.query.page, 10) || 1; // Default to page 1
+    const page = parseInt(req.query.page, 10) || 1; // Default to page 1
     const limit = parseInt(req.query.limit, 10) || 10; // Default to 10 items per page
     const skipIndex = (page - 1) * limit; // Calculate how many documents to skip
 

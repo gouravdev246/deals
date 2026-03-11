@@ -1,0 +1,10 @@
+const express = require('express')
+const router = express.Router()
+const AddProduct = require('../controllers/products/addProduct')
+const getAllProducts = require('../controllers/products/getAllProducts')
+const getOneProduct = require('../controllers/products/getOneProduct')
+const verifyToken = require('../middleware/validUser')
+router.post('/addproduct' , verifyToken , AddProduct)
+router.get('/getallproducts' , getAllProducts)
+router.get('/getoneproduct/:id' , getOneProduct)
+module.exports = router
