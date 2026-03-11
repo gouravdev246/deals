@@ -2,9 +2,9 @@ const Product = require("../../model/products.model")
 const jwt = require("jsonwebtoken")
 
 const AddProduct = async (req , res) =>{
-    const {name , description , price , image , category , brand , user} = req.body
+    const {name , description , price , image , category , user} = req.body
     try{
-        const userID = jwt.verify(user, process.env.SECRET_KEY)
+        const userID = jwt.verify(user, process.env.JWT_SECRET)
         const actualUserID = userID.id
         const product = new Product({
             name,
@@ -12,7 +12,6 @@ const AddProduct = async (req , res) =>{
             price,
             image,
             category,
-            brand,
             user: actualUserID // Link the product to the user
         });
         const savedProduct = await product.save();

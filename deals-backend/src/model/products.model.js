@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
-const User = require('./user.model') 
-const Category = require('./category.model')
+
 const productSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -20,11 +19,8 @@ const productSchema = new mongoose.Schema({
         require: true
     }],
     category: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         ref : 'Category'
-    },
-    brand: {
-        type: String,
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
