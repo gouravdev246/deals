@@ -4,6 +4,6 @@
 4. Get One Product ✅
 5. Add Category ✅
 6. Delete Product 
-7. Update Product
+7. Update Product 
 8. Chat Feature
-9.Cloudinary Integration 
+9.Cloudinary Integration ✅

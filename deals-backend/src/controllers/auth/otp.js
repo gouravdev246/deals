@@ -3,21 +3,31 @@ const OTP = require('../../model/otp.model')
 
 const otpGenerator = async (req, res) => {
     const { email } = req.body
+    console.log("Generating OTP for:", email);
     try {
         const otp = Math.floor(100000 + Math.random() * 900000);
+        console.log("OTP generated:", otp);
         await OTP.create({ email, otp })
+        console.log("OTP saved to database");
+
+        const emailUser = process.env.EMAIL_USER?.trim();
+        const emailPass = process.env.EMAIL_PASS?.trim();
+
+        if (!emailUser || !emailPass) {
+            throw new Error("Email configuration (EMAIL_USER or EMAIL_PASS) is missing in .env");
+        }
 
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS
-
+                user: emailUser,
+                pass: emailPass
             }
         })
 
+        console.log("Transporter created, sending mail...");
         await transporter.sendMail({
-            from: process.env.EMAIL_USER,
+            from: process.env.EMAIL_USER.trim(),
             to: email,
             subject: 'LPUDEALS - Your OTP Verification Code',
             html: `
@@ -41,12 +51,12 @@ const otpGenerator = async (req, res) => {
     </div>
     `
         });
-        res.status(200).send('OTP sent successfully');
-
+        console.log("Mail sent successfully");
+        res.status(200).json({ message: 'OTP sent successfully' });
 
     } catch (err) {
-        console.log("Error", err)
-        res.status(500).send('Error sending OTP');
+        console.error("OTP Error Detail:", err);
+        res.status(500).json({ message: 'Error sending OTP', error: err.message });
     }
 
 }
