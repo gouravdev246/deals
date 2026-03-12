@@ -1,34 +1,47 @@
 const Product = require("../../model/products.model");
 
 const AddProduct = async (req, res) => {
-    const { name, description, price, image, category, brand } = req.body;
-    
     try {
+        const { name, description, price, category } = req.body;
+        
         // req.user is populated by the verifyToken middleware
         if (!req.user) {
             return res.status(401).json({ message: "Unauthorized: Please log in first" });
+        }
+
+        // Handle multiple images from Cloudinary via req.files
+        let imageFiles = [];
+        if (req.files && req.files.length > 0) {
+            imageFiles = req.files.map(file => file.path);
+        }
+
+        if (imageFiles.length === 0) {
+            return res.status(400).json({ message: "Please upload at least one image" });
         }
 
         const product = new Product({
             name,
             description,
             price,
-            image, // Should be an array of image URLs
+            image: imageFiles, // Array of URLs from Cloudinary
             category,
-            brand,
-            user: req.user._id // Automatically link to the logged-in user
+            user: req.user._id 
         });
 
         const savedProduct = await product.save();
         
-        res.status(201).json({
+        return res.status(201).json({
             message: "Product added successfully",
             product: savedProduct
         });
 
     } catch (err) {
-        console.error("Add Product Error:", err.message);
-        res.status(500).json({ message: err.message });
+        // Detailed logging to help find the [object Object] source
+        console.error("Add Product Error Details:", err);
+        return res.status(500).json({ 
+            message: "Something went wrong", 
+            error: err.message || "Unknown error"
+        });
     }
 };
 
