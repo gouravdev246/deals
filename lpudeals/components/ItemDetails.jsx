@@ -1,16 +1,61 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import Link from 'next/link';
+import axios from 'axios';
 
-const ItemDetails = ({ product }) => {
-    const [activeImage, setActiveImage] = useState(product?.images?.[0] || 'https://lh3.googleusercontent.com/aida-public/AB6AXuDzSgyfi42_O43bTC5u6QjYNa8WKduByug8Ws8n-xHH1ENfqceQ9odt-6UvVpV5Kngowf1Ez-41ii8FOgNZwOP6xS8om7rDDc-CJfVN_OkyPzUIfeq6gLZGVnsaqOdA9UfjaWwHGVtC4BP706LLm52xpQ9U6jFm4265jzM0TIdFH6hG7d9W9ivr8rDa8h1itg3A5vJWgJ87wNGWSfaD0EqlvRsVFMcsoqRRNKiLVIc805IhGd6_yqIpvgvUBKqDL8MU56qHYvhh7flc');
+const ItemDetails = ({ id }) => {
+    const [product, setProduct] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const thumbnails = [];
+    
+    for(let i = 0; i < product?.image?.length; i++) {
+        thumbnails.push(product?.image[i])
+    }
+    const [activeImage, setActiveImage] = useState(thumbnails[0]);
+    console.log(activeImage)
+    console.log(thumbnails)
+    
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                setLoading(true);
+                const response = await axios.get(`http://localhost:5000/api/products/getoneproduct/${id}`);
+                if (response) {
+                    setProduct(response.data.product);
+                } else {
+                    setError(response.data.message);
+                }
+                console.log(2)
+            } catch (err) {
+                console.error("Error fetching product:", err);
+                setError("Failed to load product details");
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        if (id) {
+            fetchProduct();
+        }
+    }, [id]);
+    console.log(product)
 
-    const thumbnails = [
-        product?.images?.[0] || 'https://lh3.googleusercontent.com/aida-public/AB6AXuDzSgyfi42_O43bTC5u6QjYNa8WKduByug8Ws8n-xHH1ENfqceQ9odt-6UvVpV5Kngowf1Ez-41ii8FOgNZwOP6xS8om7rDDc-CJfVN_OkyPzUIfeq6gLZGVnsaqOdA9UfjaWwHGVtC4BP706LLm52xpQ9U6jFm4265jzM0TIdFH6hG7d9W9ivr8rDa8h1itg3A5vJWgJ87wNGWSfaD0EqlvRsVFMcsoqRRNKiLVIc805IhGd6_yqIpvgvUBKqDL8MU56qHYvhh7flc',
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuAcjVDbdHcap_oGvSTcloUAVKy8Q41-7arVkA6zJX5ha9WtXhsFdcuCBD0RFs07LA5KU29YppWk_2-q8g-qjdGbKM2h2adP9dlJCIxBHq4NvY5Zh1b_eQVz012dEYzirFmZyVhQCPRjM0Y8FqeBd1TmnuQN53vn5lqLTjutcsxRKP_lrBOrJtkDhZXsEPHvVj70EtGf6yUVRgxhQXJmDLDaXsYnKT-QFY0t3UVMryP5vp893P7yc7oxU--kwwBh-atjYFbwtcmGmCFz',
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuBtki6clvV0HZeN20e-lusrE9tbRqZwbZyBuWJUgyG-CQmoSibZEFN-KWdlT-933IMHxPoOD49QuQYnkbtMbOYdMrneyN6dWzpa2PxIyQAh3G30u9p9ivV_8ILke7QfNnu8n95cY4Zz5wNGVC7XfVijhdkF4t1grkV7fqsRIW7yLUKe76SElBh3Zv4K1IoFpPZi31JV7YV7bRh3bx5dbp4DD68UkdA7pUH53DDJ0vUBltqBTOMmxUBMfkYY7WlU6hM5XLF5ZyOt8-KV',
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuDY95ZPMMYGiBicibWls2uvwOSwXx2wP7WOpen4DLu-o8enDZ07P7eVPS3JEb0ce5iDbNoHCFwCQiq7C6tuEfSgRkHNVeXVyePVy5W2D_8Dxv2eHA-j5DtP8qdcPR_1QBKlMQ5zo1RZJPmCEyuzCaIhZiodGlWXxpO4qHsqaaNAiloLiH_bjCsTaDlD3ejwuVD-h1tfF5qqZGAL58h1ows8IwtSM5I9JO6OwQHfi1wlIZANUeTi11qeMvrxUZXOI6Jq-WaUovhLatV3'
-    ];
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
+            </div>
+        );
+    }
+
+    if (error || !product) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <p className="text-red-500">{error || "Product not found"}</p>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-[#f8f7f6] min-h-screen font-sans text-[#1b140d]">
@@ -32,7 +77,7 @@ const ItemDetails = ({ product }) => {
                         <div className="aspect-4/3 rounded-2xl overflow-hidden bg-white shadow-sm border border-orange-100 group relative">
                             <img
                                 src={activeImage}
-                                alt={product?.title}
+                                alt={product?.name}
                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                             />
                             <button className="absolute top-4 right-4 size-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-orange-600 shadow-lg hover:scale-110 transition-transform">
@@ -59,13 +104,7 @@ const ItemDetails = ({ product }) => {
                                 <h3 className="text-xl font-bold mb-6 text-gray-900 border-b border-gray-100 pb-4">Description</h3>
                                 <div className="text-gray-600 leading-relaxed space-y-4 text-sm md:text-base">
                                     <p>{product?.description || 'Selling my MacBook Air M1 (Space Grey). The device is in excellent condition with minimal signs of use. It has been used primarily for coding assignments and attending online classes.'}</p>
-                                    <ul className="list-disc pl-5 space-y-3">
-                                        <li>8GB RAM / 256GB SSD storage</li>
-                                        <li>Battery health at 92% (Regularly maintained)</li>
-                                        <li>Original charger and box available</li>
-                                        <li>Screen protector applied since day one</li>
-                                    </ul>
-                                    <p className="font-medium text-orange-600">Perfect for B.Tech students or anyone looking for a powerful yet portable machine for campus life.</p>
+                                    
                                 </div>
                             </div>
 
@@ -90,15 +129,15 @@ const ItemDetails = ({ product }) => {
                             {/* Main Header Info */}
                             <div className="bg-white p-8 rounded-2xl border border-orange-100 shadow-sm">
                                 <div className="flex flex-wrap gap-2 mb-4">
-                                    <span className="px-3 py-1 bg-green-100 text-green-700 text-[10px] font-black rounded-lg uppercase tracking-wider">Like New</span>
-                                    <span className="px-3 py-1 bg-orange-100 text-orange-600 text-[10px] font-black rounded-lg uppercase tracking-wider">Electronics</span>
+                                    <span className="px-3 py-1 bg-green-100 text-green-700 text-[10px] font-black rounded-lg uppercase tracking-wider">{product.condition}</span>
+                                    <span className="px-3 py-1 bg-orange-100 text-orange-600 text-[10px] font-black rounded-lg uppercase tracking-wider">{product.category.name}</span>
                                 </div>
                                 <h1 className="text-2xl md:text-3xl font-black mb-3 text-gray-900 leading-tight">
-                                    {product?.title || 'MacBook Air M1 - 2020 Model (Space Grey)'}
+                                    {product?.name || 'Title Not Given'}
                                 </h1>
                                 <div className="flex items-baseline gap-2 mb-6">
-                                    <span className="text-orange-600 text-4xl font-black">₹{product?.price || '55,000'}</span>
-                                    <span className="text-gray-400 text-sm line-through">₹72,000</span>
+                                    <span className="text-orange-600 text-4xl font-black">₹{product?.price || 'Price Not Given'}</span>
+                                  
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4 text-xs font-semibold text-gray-500 border-t border-gray-100 pt-6">
@@ -123,21 +162,21 @@ const ItemDetails = ({ product }) => {
                                     <div className="size-16 rounded-2xl overflow-hidden border-2 border-orange-100 shadow-sm">
                                         <img
                                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtSUcau-1ccvgXkdqXjJxUtuRjd2i-Nq8cbxPkBLTcZCwzRF_bUifADTzqq8XnVNTD1doOE5vX-0KsvMCQxSPXL-hYmsxOMaGZ5m5FnFCY3cnq0_Hm7jydLlf-GJ2YfXneeil3eXCQlzzOSWe_DZX4W99H1mcbzzmVFaNgx5em9y8KxQYcYi1aqYIbVzSwoF_uQY8EdZlDn8wfXfR1URWxuOqt_ZN33E9WH_IiYiSbau7qun-VF-geq6NYAIVYU5bxvNTzS5LEdCLW"
-                                            alt="Rahul Sharma"
+                                            
                                             className="w-full h-full object-cover"
                                         />
                                     </div>
                                     <div>
-                                        <h4 className="text-lg font-bold text-gray-900">Rahul Sharma</h4>
-                                        <p className="text-xs text-gray-500 font-medium">B.Tech CSE, 3rd Year</p>
+                                        <h4 className="text-lg font-bold text-gray-900">{product?.user?.name || 'Name Not Given'}</h4>
+                                       
+                                            <span className="text-xs font-black text-gray-900 ml-1">LPU ID : {product?.user?.regid || 'Regid Not Given'}</span>
                                         <div className="flex items-center gap-1 mt-2">
-                                            <div className="flex">
+                                            {/* <div className="flex">
                                                 {[1, 2, 3, 4, 5].map((s) => (
                                                     <span key={s} className="material-symbols-outlined text-[12px]! text-yellow-500 fill-1">star</span>
                                                 ))}
-                                            </div>
-                                            <span className="text-xs font-black text-gray-900 ml-1">4.8</span>
-                                            <span className="text-[10px] text-gray-400 font-bold ml-1">(12 Deals)</span>
+                                            </div> */}
+                                            {/* <span className="text-[10px] text-gray-400 font-bold ml-1">(12 Deals)</span> */}
                                         </div>
                                     </div>
                                 </div>

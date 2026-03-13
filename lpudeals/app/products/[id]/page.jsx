@@ -1,8 +1,11 @@
+'use client'
 import ItemDetails from "@/components/ItemDetails";
+import { useParams } from "next/navigation";
 
-export default function ProductDetailsPage({ params }) {
-    // In a real app, you would fetch product data using params.id
+export default function ProductDetailsPage() {
+    const params = useParams();
+
     return (
-        <ItemDetails />
+        <ItemDetails id={params.id} />
     );
 }

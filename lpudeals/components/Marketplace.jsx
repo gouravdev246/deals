@@ -61,12 +61,12 @@ const Marketplace = () => {
                     {/* Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                         {products.map((product) => (
-                            <Link href={`/products/${product.id}`} key={product.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all group relative border border-gray-100">
+                            <Link href={`/products/${product._id}`} key={product._id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all group relative border border-gray-100">
                                 <button className="absolute top-3 right-3 z-10 p-2 bg-white/90 backdrop-blur rounded-full shadow-sm text-gray-400 hover:text-red-500 transition-colors">
                                     <span className="material-icons text-sm">favorite_border</span>
                                 </button>
 
-                                <div className="h-56 overflow-hidden bg-gray-100 relative">
+                                <div className="h-56 overflow-hidden bg-gray-100 relative" key={product._id}>
                                     <img
                                         src={product.image[0]}
                                         alt={product.name}
@@ -103,7 +103,7 @@ const Marketplace = () => {
                                                     className="w-full h-full object-cover"
                                                 />
                                             </div>
-                                            <span className="text-xs font-semibold text-gray-700">{product.seller}</span>
+                                            <span className="text-xs font-semibold text-gray-700">{product.user}</span>
                                         </div>
                                         {product.trusted && (
                                             <span className="flex items-center gap-1 text-[10px] font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-100">
