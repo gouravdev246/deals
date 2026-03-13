@@ -1,7 +1,17 @@
 'use client';
 import React from 'react';
+import { useState , useEffect } from 'react';
+import axios from 'axios';
 
 function HomePage() {
+    const [categories , setCategories] = useState([]);
+    useEffect(() => {
+        const fetchCategory = async () => {
+            const res = await axios.get('/api/products/getallcategory');
+            setCategories(res.data.categories);
+        }
+        fetchCategory();
+    }, []);
     return (
         <div className="bg-gray-50 font-sans text-gray-900">
             {/* Hero Section */}
@@ -49,14 +59,7 @@ function HomePage() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h2 className="text-3xl font-bold text-gray-900 mb-10">Popular Categories</h2>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-                        {[
-                            { name: 'Books', icon: 'auto_stories' },
-                            { name: 'Electronics', icon: 'devices' },
-                            { name: 'Cycles', icon: 'pedal_bike' },
-                            { name: 'Hostel', icon: 'chair' },
-                            { name: 'Clothing', icon: 'checkroom' },
-                            { name: 'Others', icon: 'more_horiz' }
-                        ].map((cat) => (
+                        {categories.map((cat) => (
                             <a key={cat.name} className="group flex flex-col items-center p-6 rounded-2xl bg-gray-50 hover:bg-orange-50 transition-all border border-gray-100 hover:border-orange-200" href="#">
                                 <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 transition-transform">
                                     <span className="material-icons text-orange-600 text-3xl">{cat.icon}</span>

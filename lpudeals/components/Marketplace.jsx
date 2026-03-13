@@ -1,19 +1,13 @@
 'use client';
-import React, { useState } from 'react';
+import axios from 'axios';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
 
 const Marketplace = () => {
     const [activeCategory, setActiveCategory] = useState('');
 
-    const categories = [
-        { name: 'Books & Study Materials', icon: 'auto_stories' },
-        { name: 'Cycles & Transport', icon: 'pedal_bike' },
-        { name: 'Electronics & Gadgets', icon: 'devices' },
-        { name: 'Hostel Essentials', icon: 'chair' },
-        { name: 'Clothing', icon: 'checkroom' },
-        { name: 'Others', icon: 'more_horiz' }
-    ];
+    const [categories, setCategory] = useState([])
 
     const products = [
         {
@@ -82,7 +76,17 @@ const Marketplace = () => {
             verified: false,
             image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDf_wLCpIMFoFozJVZ1xi2ScoreT2FzUqvh6z7JHG0zGuvAy1t7Yi6Bf-3jpQJ9e42t789imyYtOG2Jlhx2I5GF2M8yHlkZ1fIiTKBHD0ybmVxZXlzJ-fC1vvG1HETcQdWQ7noRlY1txkdlFnuWDjpaPX1k7XW6tOXq7JkuPGlE5V_iwrQ1SMQZT0rkFDKIRVPbbcDPLLlaNmXt8dabcgdhXFArWL_A_O1OvPa7bnXzjPZFt5tVVIH28-29o5f8NZTuSJjCoOe-h3FW'
         }
+
     ];
+
+    useEffect(() => {
+        const fetchCategory = async () => {
+            const res = await axios.get('/api/products/getallcategory');
+            setCategory(res.data.categories);
+        }
+        fetchCategory();
+    }, []);
+    console.log(categories)
 
     return (
         <div className="bg-[#f8f7f6] min-h-screen font-sans">

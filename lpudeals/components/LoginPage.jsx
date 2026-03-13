@@ -110,7 +110,7 @@ function LoginPage() {
                                 <div className="space-y-1 text-black">
                                     <div className="flex justify-between items-center ml-1">
                                         <label className="text-sm font-semibold text-gray-700">Password</label>
-                                        <Link href="#" className="text-xs font-bold text-orange-600 hover:underline">Forgot?</Link>
+                                        <Link href="/forgetpass" className="text-xs font-bold text-orange-600 hover:underline">Forgot?</Link>
                                     </div>
                                     <input
                                         type="password"
