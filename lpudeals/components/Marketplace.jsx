@@ -1,12 +1,41 @@
 'use client';
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import Link from 'next/link';
 import AppContext from '../app/context/AppContext';
 
 
 const Marketplace = () => {
-    const { categories, products } = useContext(AppContext);
+    const { categories, products , searchProduct , setSearchProduct } = useContext(AppContext);
     const [activeCategory, setActiveCategory] = useState('');
+    const [filteredProduct , setFilterdProduct] = useState([])
+    const [currentPage, setCurrentPage] = useState(1);
+    
+    const itemsPerPage = 6;
+
+    useEffect(()=>{
+        const filterd = products.filter((product)=>{
+            if(activeCategory === '') return true ;
+            return product.category.name === activeCategory ;
+        })
+        setFilterdProduct(filterd)
+        setCurrentPage(1); // Reset to first page on category change
+    }, [products , activeCategory])
+
+    useEffect(()=>{
+        const search = products.filter((product)=>{
+            return product.name.toLowerCase().includes(searchProduct.toLowerCase())
+        })
+        setFilterdProduct(search)
+        setCurrentPage(1); // Reset to first page on category change
+    }, [products , searchProduct])
+
+    // Pagination calculations
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredProduct.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(filteredProduct.length / itemsPerPage);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     return (
         <div className="bg-[#f8f7f6] min-h-screen font-sans">
@@ -21,6 +50,17 @@ const Marketplace = () => {
                                 Category
                             </h3>
                             <div className="space-y-2">
+                                <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50 cursor-pointer transition-all group">
+                                    <input
+                                        type="checkbox"
+                                        className="rounded text-orange-600 focus:ring-orange-500 border-gray-300"
+                                        checked={activeCategory === ''}
+                                        onChange={() => setActiveCategory('')}
+                                    />
+                                    <span className={`text-sm ${activeCategory === '' ? 'font-semibold text-orange-600' : 'text-gray-600 group-hover:text-orange-600'}`}>
+                                        All Categories
+                                    </span>
+                                </label>
                                 {categories.map((cat) => (
                                     <label key={cat.name} className="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50 cursor-pointer transition-all group">
                                         <input
@@ -46,25 +86,15 @@ const Marketplace = () => {
                     {/* Results Header */}
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
                         <p className="text-sm text-gray-500">
-                            Showing <span className="font-bold text-gray-900">{products.length}</span> results for <span className="text-orange-600 font-bold">"{activeCategory}"</span>
+                            Showing <span className="font-bold text-gray-900">{filteredProduct.length}</span> results {activeCategory && <>for <span className="text-orange-600 font-bold">"{activeCategory}"</span></>}
                         </p>
-                        <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-100 shadow-sm">
-                            <span className="text-sm text-gray-500">Sort by:</span>
-                            <select className="bg-transparent border-none text-sm font-bold focus:ring-0 cursor-pointer text-gray-900 outline-none">
-                                <option>Newest First</option>
-                                <option>Price: Low to High</option>
-                                <option>Price: High to Low</option>
-                            </select>
-                        </div>
                     </div>
 
                     {/* Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                        {products.map((product) => (
+                        {currentItems.map((product) => (
                             <Link href={`/products/${product._id}`} key={product._id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all group relative border border-gray-100">
-                                <button className="absolute top-3 right-3 z-10 p-2 bg-white/90 backdrop-blur rounded-full shadow-sm text-gray-400 hover:text-red-500 transition-colors">
-                                    <span className="material-icons text-sm">favorite_border</span>
-                                </button>
+                            
 
                                 <div className="h-56 overflow-hidden bg-gray-100 relative" key={product._id}>
                                     <img
@@ -86,24 +116,19 @@ const Marketplace = () => {
                                     </div>
 
                                     <div className="flex items-center gap-3 text-[11px] text-gray-500 font-medium mb-4">
-                                        <div className="flex items-center gap-1">
-                                            <span className="material-icons text-xs text-orange-500">location_on</span>
-                                            {product.location}
-                                        </div>
-                                        <span>•</span>
-                                        <div>{product.time}</div>
+                                        <div>{product.time || 'Recently posted'}</div>
                                     </div>
 
                                     <div className="flex items-center justify-between pt-4 border-t border-gray-50">
                                         <div className="flex items-center gap-2">
                                             <div className="w-7 h-7 rounded-full bg-gray-100 overflow-hidden border border-gray-100">
                                                 <img
-                                                    src={`https://ui-avatars.com/api/?name=${product.seller}&background=random`}
-                                                    alt={product.seller}
+                                                    src={`https://ui-avatars.com/api/?name=${product.user?.name || 'User'}&background=random`}
+                                                    alt={product.user?.name || 'User'}
                                                     className="w-full h-full object-cover"
                                                 />
                                             </div>
-                                            <span className="text-xs font-semibold text-gray-700">{product.user}</span>
+                                            <span className="text-xs font-semibold text-gray-700">{product.user?.name || 'LPU Student'}</span>
                                         </div>
                                         {product.trusted && (
                                             <span className="flex items-center gap-1 text-[10px] font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-100">
@@ -118,7 +143,7 @@ const Marketplace = () => {
                                 <div className="absolute inset-x-0 bottom-0 p-5 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                                     <div className="w-full py-3 bg-orange-600 text-white rounded-xl font-bold shadow-lg shadow-orange-500/20 hover:bg-orange-700 transition-all active:scale-95 flex items-center justify-center gap-2">
                                         <span className="material-icons text-sm">visibility</span>
-                                        Quick View
+                                        View Details
                                     </div>
                                 </div>
                             </Link>
@@ -126,19 +151,35 @@ const Marketplace = () => {
                     </div>
 
                     {/* Pagination */}
-                    <div className="mt-12 flex justify-center items-center gap-2">
-                        <button className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-400 hover:text-orange-600 hover:border-orange-600 transition-all">
-                            <span className="material-icons">chevron_left</span>
-                        </button>
-                        <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-orange-600 text-white font-bold shadow-lg shadow-orange-500/20">1</button>
-                        <button className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 hover:text-orange-600 hover:border-orange-600 font-bold transition-all">2</button>
-                        <button className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 hover:text-orange-600 hover:border-orange-600 font-bold transition-all">3</button>
-                        <span className="px-2 text-gray-400">...</span>
-                        <button className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 hover:text-orange-600 hover:border-orange-600 font-bold transition-all">12</button>
-                        <button className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-400 hover:text-orange-600 hover:border-orange-600 transition-all">
-                            <span className="material-icons">chevron_right</span>
-                        </button>
-                    </div>
+                    {totalPages > 1 && (
+                        <div className="mt-12 flex justify-center items-center gap-2">
+                            <button 
+                                onClick={() => paginate(Math.max(1, currentPage - 1))}
+                                disabled={currentPage === 1}
+                                className={`w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 bg-white transition-all ${currentPage === 1 ? 'text-gray-200 cursor-not-allowed' : 'text-gray-400 hover:text-orange-600 hover:border-orange-600'}`}
+                            >
+                                <span className="material-icons">chevron_left</span>
+                            </button>
+                            
+                            {[...Array(totalPages)].map((_, i) => (
+                                <button
+                                    key={i + 1}
+                                    onClick={() => paginate(i + 1)}
+                                    className={`w-10 h-10 flex items-center justify-center rounded-xl font-bold transition-all ${currentPage === i + 1 ? 'bg-orange-600 text-white shadow-lg shadow-orange-500/20' : 'border border-gray-200 bg-white text-gray-600 hover:text-orange-600 hover:border-orange-600'}`}
+                                >
+                                    {i + 1}
+                                </button>
+                            ))}
+
+                            <button 
+                                onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
+                                disabled={currentPage === totalPages}
+                                className={`w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 bg-white transition-all ${currentPage === totalPages ? 'text-gray-200 cursor-not-allowed' : 'text-gray-400 hover:text-orange-600 hover:border-orange-600'}`}
+                            >
+                                <span className="material-icons">chevron_right</span>
+                            </button>
+                        </div>
+                    )}
                 </section>
             </main>
 
@@ -179,7 +220,7 @@ const Marketplace = () => {
                         </div>
                     </div>
                     <div className="mt-12 pt-8 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center gap-4">
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">© 2024 LpuDeals. Built with ❤️ for Students.</p>
+                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">© 2026 LpuDeals. Built with ❤️ for Students.</p>
                         <div className="flex gap-6">
                             <span className="material-icons text-gray-400 hover:text-orange-600 cursor-pointer transition-colors">facebook</span>
                             <span className="material-icons text-gray-400 hover:text-orange-600 cursor-pointer transition-colors">camera_alt</span>

@@ -1,45 +1,37 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState , useContext } from 'react';
 import Link from 'next/link';
-
+import AppContext from "../app/context/AppContext";
+import axios from 'axios';
 const UserDashboard = () => {
-  
+    const { cart, user, isLoggedIn, logout, searchProduct, setSearchProduct, products, refreshProducts } = useContext(AppContext);
+    const [userProducts , setUserProduct] = useState([])
 
-    const listings = [
-        {
-            id: 1,
-            title: 'Apple iPhone 13 (128GB)',
-            price: '38,000',
-            description: 'Used for 1 year, perfect condition. Comes with original box and bill.',
-            status: 'Active',
-            posted: '2 days ago',
-            views: 128,
-            inquiries: 4,
-            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA0oypQQyNUHI6o7x6ebDvmuERTVBRaBB0tD6W-jadk-AWF1H-4EgnmXExeAZlSKBugDS4sALP3z2JCLDHYyOSeJaNefpIn7qpLaSoSJjLQpBVFRIdhZBZOVhLKt_APal331bPC3Ffn7dYtS7Dl9jbkAJFynRmxsoqyf2qbxl4nPGdDkvQoBLvSmeLunk9KEfBYAxpvvAnnFYlAunUMm7VlMUndg7qgmpIxfJnRMMrk8h-Hl8Ci0NnNVJK9JqA_4pyU5JsTlvPPkUy-'
-        },
-        {
-            id: 2,
-            title: 'Physics II - HC Verma Vol 2',
-            price: '450',
-            description: 'Brand new condition, no highlights or markings. Essential for MEC-101.',
-            status: 'Active',
-            posted: '5 days ago',
-            views: 42,
-            inquiries: 0,
-            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCfcuKvo5ZvMOHu_6rZhSfU-FP4iX5fiC0mlkPPRsZmyDhDGQ5WAr8AMVywMFvGQzyiJgWglhzjWIKg7F3NCYCfWWuIquDwbCOV-ogYJcs5lh5ickk6Hu6OTqUtvBFETFWHB3cvP97kVkHT1yVZwijLevNJKen7oxAHHhKsjQr585Fhs9wGZuG1_WmFxiUCLuawpllnOdViHB6meyeE3nKRm05_VMZmxVduqA3IVwx-70NbpYVOZRZkZWPS80RDfUHFLA52pAbESvNP'
-        },
-        {
-            id: 3,
-            title: 'Study Chair (Ergonomic)',
-            price: '1,200',
-            description: 'Comfortable mesh chair for long study hours. Moving out of hostel.',
-            status: 'Draft',
-            posted: 'Incomplete listing',
-            views: 0,
-            inquiries: 0,
-            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCV0LdTo1IlxSDjG-F0dZUMOPtJ9usTMFhmmaZKadRwQaZy7rUOLL95zlSe2XxCUW6ZmdUcse6JNOVhtAKgIyuC88xoEQhP7NcfS20610gDNtp5DkECbxNR7MZ6IVJo7D5hvpnuhqN6QDwBJoTFxjpdPxTiz8FeKMV8jrh-LHjuECJ4ruW8TcbYSeKR2NIgBDjVx5GYbP2unoT5_ifsDf_NU9ecAakw9lPDRKczxDvVZpljKbidN7bFLA2t0o4C5TV304r6d95_c7w5'
+    useEffect(()=>{
+        if (products && user) {
+            const up = products.filter((p) => p.user?._id === user._id);
+            setUserProduct(up);
         }
-    ];
+    },[products, user]);
+
+    const deleteItem = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this listing?")) return;
+
+        try {
+            const res = await axios.delete(`/api/products/deleteproduct/${id}`);
+            if (res.status === 200) {
+                alert("Product deleted successfully!");
+                refreshProducts(); // Refresh global context data
+            }
+        } catch (err) {
+            console.error("Delete error:", err);
+            alert(err.response?.data?.message || "Failed to delete product");
+        }
+    };
+console.log(userProducts)
+
+
+ 
 
     return (
         <div className="flex bg-[#f8f7f6] min-h-screen">
@@ -70,8 +62,8 @@ const UserDashboard = () => {
                             <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></div>
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold text-gray-900 truncate">Aryan Sharma</p>
-                            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider truncate">Section K21PF</p>
+                            <p className="text-sm font-bold text-gray-900 truncate">{user.name}</p>
+                            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider truncate">{user.email}</p>
                         </div>
                     </div>
                 </div>
@@ -118,13 +110,13 @@ const UserDashboard = () => {
 
                     <div className="p-6 md:p-8">
                         <div className="grid grid-cols-1 gap-8">
-                            {listings.map((item) => (
-                                <div key={item.id} className="group flex flex-col lg:flex-row items-start lg:items-center gap-8 p-6 rounded-2xl border border-gray-100 hover:border-orange-200 hover:shadow-xl hover:shadow-orange-500/5 transition-all duration-300">
+                            {userProducts.map((item) => (
+                                <div key={item._id} className="group flex flex-col lg:flex-row items-start lg:items-center gap-8 p-6 rounded-2xl border border-gray-100 hover:border-orange-200 hover:shadow-xl hover:shadow-orange-500/5 transition-all duration-300">
                                     <div className="relative w-full lg:w-56 h-40 shrink-0 overflow-hidden rounded-2xl shadow-md border border-gray-50">
                                         <img
                                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                            src={item.image}
-                                            alt={item.title}
+                                            src={item.image[0]}
+                                            alt={item.name}
                                         />
                                         <span className={`absolute top-3 left-3 px-3 py-1.5 ${item.status === 'Active' ? 'bg-green-600' : 'bg-yellow-500'} text-white text-[10px] font-black uppercase tracking-widest rounded-lg shadow-lg`}>
                                             {item.status}
@@ -140,7 +132,7 @@ const UserDashboard = () => {
                                             <p className="text-2xl font-black text-orange-600 shrink-0">₹{item.price}</p>
                                         </div>
 
-                                        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2">
+                                        {/* <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2">
                                             <span className="flex items-center gap-2 text-[10px] text-gray-400 font-black uppercase tracking-wider">
                                                 <span className="material-icons-round text-sm text-orange-500">calendar_today</span>
                                                 {item.posted === 'Incomplete listing' ? item.posted : `Posted ${item.posted}`}
@@ -157,20 +149,20 @@ const UserDashboard = () => {
                                                     </span>
                                                 </>
                                             )}
-                                        </div>
+                                        </div> */}
                                     </div>
 
                                     <div className="flex lg:flex-col gap-3 w-full lg:w-40 mt-6 lg:mt-0">
-                                        <button className={`flex-1 py-3 px-4 ${item.status === 'Active' ? 'bg-orange-600 hover:bg-orange-700 shadow-orange-500/20' : 'bg-gray-900 hover:bg-gray-800 shadow-gray-900/10'} text-white text-xs font-black rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 active:scale-95 uppercase tracking-widest`}>
+                                        {/* <button className={`flex-1 py-3 px-4 ${item.status === 'Active' ? 'bg-orange-600 hover:bg-orange-700 shadow-orange-500/20' : 'bg-gray-900 hover:bg-gray-800 shadow-gray-900/10'} text-white text-xs font-black rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 active:scale-95 uppercase tracking-widest`}>
                                             <span className="material-icons-round text-sm">{item.status === 'Active' ? 'check' : 'publish'}</span>
                                             {item.status === 'Active' ? 'Mark Sold' : 'Publish'}
-                                        </button>
+                                        </button> */}
                                         <div className="flex gap-3 flex-1">
-                                            <button className="flex-1 py-3 px-4 border-2 border-gray-50 font-black text-gray-600 text-xs rounded-xl hover:bg-gray-50 hover:text-orange-600 transition-all flex items-center justify-center gap-2 uppercase tracking-widest">
+                                            {/* <button className="flex-1 py-3 px-4 border-2 border-gray-50 font-black text-gray-600 text-xs rounded-xl hover:bg-gray-50 hover:text-orange-600 transition-all flex items-center justify-center gap-2 uppercase tracking-widest">
                                                 <span className="material-icons-round text-sm">edit</span>
                                                 Edit
-                                            </button>
-                                            <button className="p-3 border-2 border-red-50 text-red-400 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all flex items-center justify-center">
+                                            </button> */}
+                                            <button className="p-3 border-2 border-red-50 text-red-400 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all flex items-center justify-center" onClick={() => deleteItem(item._id)}>
                                                 <span className="material-icons-round text-sm">delete_outline</span>
                                             </button>
                                         </div>
@@ -180,7 +172,7 @@ const UserDashboard = () => {
                         </div>
 
                         {/* Pagination */}
-                        <div className="flex items-center justify-center gap-3 mt-12">
+                        {/* <div className="flex items-center justify-center gap-3 mt-12">
                             <button className="p-3 rounded-xl border-2 border-gray-50 text-gray-400 disabled:opacity-30 hover:bg-gray-50 transition-all" disabled>
                                 <span className="material-icons-round">chevron_left</span>
                             </button>
@@ -190,7 +182,7 @@ const UserDashboard = () => {
                             <button className="p-3 rounded-xl border-2 border-gray-50 text-gray-400 hover:bg-gray-50 transition-all">
                                 <span className="material-icons-round">chevron_right</span>
                             </button>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 

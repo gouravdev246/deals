@@ -31,6 +31,8 @@ export const AppWrapper = ({ children }) => {
     // ─── Loading States ───
     const [loading, setLoading] = useState(true);
 
+    const [searchProduct , setSearchProduct] = useState('')
+
     // ─── Hydrate user from localStorage on mount ───
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
@@ -166,7 +168,10 @@ export const AppWrapper = ({ children }) => {
             categories,
             products,
             refreshProducts,
-            refreshCategories,
+            refreshCategories, 
+
+            setSearchProduct , 
+            searchProduct
         }}>
             {children}
         </AppContext.Provider>

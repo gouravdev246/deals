@@ -127,8 +127,7 @@ function HomePage() {
                             </ul>
                         </div>
                         <div className="lg:w-1/2 min-h-[400px]">
-                            <img alt="LPU Map" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBN9CpmDsKRozV88TYoan7KAmb4rVNwDizxHZc0gXTcMMazF4wBzRGkhx4ikIvgS8hPVCGuVdvofUVs0NVmMn6pIyMKJj-m33AmzZielrG2DHnpe-WscsuZyJzcuj6qAE5Bp2DZYfjrNC8-mRBtJK_c7ijLHsLkY3_4AOkuijiVVKiOoWo-yqTV_Npk3gXFaBf4GeFDW-78-ABPE_f4uel1bduRsE5_qwEiZfkk8hEj_PvgHg19xGy1h5_O4iJERIl-dwAsAh_J30Ue" />
-                        </div>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d24443.697286873434!2d75.6667685508728!3d31.255386023262897!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391a5f5e9c489cf3%3A0x4049a5409d53c300!2sLovely%20Professional%20University!5e1!3m2!1sen!2sin!4v1773408285087!5m2!1sen!2sin" width="600" height="450" style={{border:0}} allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>                        </div>
                     </div>
                 </div>
             </section>

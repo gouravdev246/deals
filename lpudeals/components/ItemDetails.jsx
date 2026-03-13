@@ -4,29 +4,24 @@ import Link from 'next/link';
 import axios from 'axios';
 
 const ItemDetails = ({ id }) => {
-    const [product, setProduct] = useState([]);
+    const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const thumbnails = [];
-    
-    for(let i = 0; i < product?.image?.length; i++) {
-        thumbnails.push(product?.image[i])
-    }
-    const [activeImage, setActiveImage] = useState(thumbnails[0]);
-    console.log(activeImage)
-    console.log(thumbnails)
-    
+    const [activeImage, setActiveImage] = useState(null);
+
+    // Thumbnails derived from product.image
+    const thumbnails = product?.image || [];
+
     useEffect(() => {
         const fetchProduct = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`http://localhost:5000/api/products/getoneproduct/${id}`);
-                if (response) {
+                const response = await axios.get(`/api/products/getoneproduct/${id}`);
+                if (response.data.product) {
                     setProduct(response.data.product);
                 } else {
-                    setError(response.data.message);
+                    setError(response.data.message || 'Product not found');
                 }
-                console.log(2)
             } catch (err) {
                 console.error("Error fetching product:", err);
                 setError("Failed to load product details");
@@ -39,7 +34,13 @@ const ItemDetails = ({ id }) => {
             fetchProduct();
         }
     }, [id]);
-    console.log(product)
+
+    // Set activeImage when product data loads
+    useEffect(() => {
+        if (product?.image?.length > 0) {
+            setActiveImage(product.image[0]);
+        }
+    }, [product]);
 
     if (loading) {
         return (
@@ -74,11 +75,11 @@ const ItemDetails = ({ id }) => {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                     {/* Left Side: Image Gallery */}
                     <div className="lg:col-span-7 space-y-4">
-                        <div className="aspect-4/3 rounded-2xl overflow-hidden bg-white shadow-sm border border-orange-100 group relative">
+                        <div className="aspect-4/3 rounded-2xl overflow-hidden bg-gray-50 shadow-sm border border-orange-100 group relative">
                             <img
                                 src={activeImage}
                                 alt={product?.name}
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
                             />
                             <button className="absolute top-4 right-4 size-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-orange-600 shadow-lg hover:scale-110 transition-transform">
                                 <span className="material-symbols-outlined">favorite</span>

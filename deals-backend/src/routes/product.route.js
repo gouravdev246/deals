@@ -12,6 +12,6 @@ router.post('/addproduct', verifyToken, upload.array('image', 5), AddProduct)
 router.get('/getallproducts' , getAllProducts)
 router.get('/getoneproduct/:id' , getOneProduct)
 router.post('/addcategory' , AddCategory)
-router.delete('/deleteproduct/:id' , verifyToken , deleteProduct)
+router.delete('/deleteproduct/:id' , deleteProduct)
 router.get('/getallcategory' , getAllCategory)
 module.exports = router

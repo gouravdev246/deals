@@ -9,6 +9,8 @@ const getAllProducts = async (req , res)=>{
     try {
         // Fetch the subset of data using skip() and limit()
         const products = await Product.find()
+            .populate('user' , 'name')
+            .populate('category' , 'name')
             .skip(skipIndex)
             .limit(limit)
             .exec(); // exec() returns a promise
