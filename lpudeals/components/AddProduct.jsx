@@ -1,22 +1,65 @@
 'use client';
 import React, { useState } from 'react';
 import { useContext } from 'react';
+import axios from 'axios';
 import AppContext from '../app/context/AppContext';
 
 function AddProduct() {
-    const [preview, setPreview] = useState(null);
+    const [previews, setPreviews] = useState([]);
+    const [imageFiles, setImageFiles] = useState([]);
     const {categories} = useContext(AppContext);
+    const [product, setProduct] = useState({
+        name: "",
+        description: "",
+        price: "",
+        category: "",
+        condition: "",
+    });
 
     const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPreview(reader.result);
-            };
-            reader.readAsDataURL(file);
+        const files = Array.from(e.target.files);
+        setImageFiles(files);
+
+        // Generate previews for all selected files
+        const previewPromises = files.map((file) => {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.readAsDataURL(file);
+            });
+        });
+        Promise.all(previewPromises).then(setPreviews);
+    };
+
+    const AddProductAPI = async (e) => {
+        e.preventDefault();
+        try {
+            const formData = new FormData();
+            formData.append('name', product.name);
+            formData.append('description', product.description);
+            formData.append('price', product.price);
+            formData.append('category', product.category);
+            formData.append('condition', product.condition);
+
+            // Append each image file with the key 'image' (matches upload.array('image', 5))
+            imageFiles.forEach((file) => {
+                formData.append('image', file);
+            });
+
+            const res = await axios.post('/api/products/addproduct', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            console.log(res.data);
+            alert('Product added successfully!');
+            e.target.reset();
+            setPreviews([]);
+            setImageFiles([]);
+        } catch (err) {
+            console.log(err);
+            alert(err.response?.data?.message || 'Failed to add product');
         }
     };
+
 
     return (
         <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -33,7 +76,7 @@ function AddProduct() {
 
                 {/* Form Card */}
                 <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
-                    <form className="p-8 lg:p-12 space-y-8">
+                    <form className="p-8 lg:p-12 space-y-8" onSubmit={AddProductAPI}>
                         {/* Basic Information */}
                         <div className="space-y-6">
                             <h2 className="text-xl font-bold text-gray-800 border-l-4 border-orange-500 pl-3">Basic Information</h2>
@@ -47,6 +90,8 @@ function AddProduct() {
                                     id="productName"
                                     className="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none bg-gray-50/50"
                                     placeholder="e.g. Lab Coat, Engineering Graphics Set, iPhone 13"
+                                    value={product.name}
+                                    onChange={(e) => setProduct({...product , name: e.target.value})}
                                 />
                             </div>
 
@@ -59,6 +104,8 @@ function AddProduct() {
                                         id="category"
                                         name='category'
                                         className="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none bg-gray-50/50 appearance-none"
+                                        value={product.category}
+                                        onChange={(e) => setProduct({...product , category: e.target.value})}
                                     >
                                         {categories.map((cat) => (
                                             <option key={cat.name} value={cat._id}>{cat.name}</option>
@@ -72,6 +119,8 @@ function AddProduct() {
                                     <select
                                         id="category"
                                         className="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none bg-gray-50/50 appearance-none"
+                                        value={product.condition}
+                                        onChange={(e) => setProduct({...product , condition: e.target.value})}
                                     >
                                         <option>New</option>
                                         <option>Like New</option>
@@ -92,6 +141,8 @@ function AddProduct() {
                                             id="productPrice"
                                             className="block w-full pl-9 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none bg-gray-50/50"
                                             placeholder="0.00"
+                                            value={product.price}
+                                            onChange={(e) => setProduct({...product , price: e.target.value})}
                                         />
                                     </div>
                                 </div>
@@ -111,6 +162,8 @@ function AddProduct() {
                                     rows="5"
                                     className="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none bg-gray-50/50 resize-none"
                                     placeholder="Describe your product condition, usage time, and any key features..."
+                                    value={product.description}
+                                    onChange={(e) => setProduct({...product , description: e.target.value})}
                                 ></textarea>
                             </div>
 
@@ -124,18 +177,25 @@ function AddProduct() {
                                         type="file"
                                         id="productImage"
                                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                        onChange={handleImageChange}
                                         accept="image/*"
+                                        multiple
+                                        onChange={handleImageChange}
                                     />
+                                  
                                     <div className="space-y-1 text-center">
-                                        {preview ? (
-                                            <div className="relative inline-block">
-                                                <img src={preview} alt="Preview" className="h-48 w-48 object-cover rounded-lg shadow-md" />
-                                                <div className="absolute -top-2 -right-2 bg-orange-600 text-white rounded-full p-1 shadow-lg">
-                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                                    </svg>
-                                                </div>
+                                        {previews.length > 0 ? (
+                                            <div className="flex flex-wrap gap-3 justify-center">
+                                                {previews.map((src, idx) => (
+                                                    <div key={idx} className="relative inline-block">
+                                                        <img src={src} alt={`Preview ${idx + 1}`} className="h-24 w-24 object-cover rounded-lg shadow-md" />
+                                                        <div className="absolute -top-2 -right-2 bg-orange-600 text-white rounded-full p-1 shadow-lg">
+                                                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                                <p className="w-full text-xs text-gray-500 mt-2">{imageFiles.length} image(s) selected — click to change</p>
                                             </div>
                                         ) : (
                                             <>
@@ -154,12 +214,12 @@ function AddProduct() {
                                                     />
                                                 </svg>
                                                 <div className="flex text-sm text-gray-600">
-                                                    <span className="relative rounded-md font-medium text-orange-600 hover:text-orange-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-orange-500">
-                                                        Upload a file
+                                                    <span className="relative rounded-md font-medium text-orange-600 hover:text-orange-500">
+                                                        Upload files
                                                     </span>
                                                     <p className="pl-1">or drag and drop</p>
                                                 </div>
-                                                <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                                                <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB (max 5 images)</p>
                                             </>
                                         )}
                                     </div>

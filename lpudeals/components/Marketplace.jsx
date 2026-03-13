@@ -68,8 +68,8 @@ const Marketplace = () => {
 
                                 <div className="h-56 overflow-hidden bg-gray-100 relative">
                                     <img
-                                        src={product.image}
-                                        alt={product.title}
+                                        src={product.image[0]}
+                                        alt={product.name}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                     />
                                     {product.verified && (
@@ -81,7 +81,7 @@ const Marketplace = () => {
 
                                 <div className="p-5">
                                     <div className="flex justify-between items-start mb-1">
-                                        <h3 className="font-bold text-gray-900 truncate flex-1 pr-2">{product.title}</h3>
+                                        <h3 className="font-bold text-gray-900 truncate flex-1 pr-2">{product.name}</h3>
                                         <span className="text-orange-600 font-black text-lg">₹{product.price}</span>
                                     </div>
 
