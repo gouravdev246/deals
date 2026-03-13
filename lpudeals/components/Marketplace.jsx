@@ -1,92 +1,12 @@
 'use client';
-import axios from 'axios';
+import { useState, useContext } from 'react';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import AppContext from '../app/context/AppContext';
 
 
 const Marketplace = () => {
+    const { categories, products } = useContext(AppContext);
     const [activeCategory, setActiveCategory] = useState('');
-
-    const [categories, setCategory] = useState([])
-
-    const products = [
-        {
-            id: 1,
-            title: 'Hero Sprint Next 24T',
-            price: '4,500',
-            location: 'BH-1 Hostel',
-            time: '2 days ago',
-            seller: 'Rahul Sharma',
-            trusted: true,
-            verified: true,
-            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDASsU-_foQ1SteloelLIQnk_QYphdYkIeqcO2JMIIozInXn94f4AhvU1E_UAlHxqIKJGeEvbrUmmoI7l08m8_KYeKmlQtcr7ptTUOmsigiwNji9vZE5nZzgxnPaoZnZNcmUlbyKgdeU0QTMnAOI_gvVxMPf3ZabvjFN1Pd93718FJtB4RDARJ3esIuL0b6HNGm1yzEP-YawRooz_qtLxzmtGwWJudCnd_w3XES-8irCMSEEfybUKwRhrmaH-zwIM9X40wsxXscsQPg'
-        },
-        {
-            id: 2,
-            title: 'Atlas Peak MTB - 21 Speed',
-            price: '6,200',
-            location: 'BH-5 Hostel',
-            time: 'Just now',
-            seller: 'Priya Kaur',
-            trusted: true,
-            verified: true,
-            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDAD3AozPtrCRfrnCbxdsKz466hJFMWujVPDo9KD899UylyhZ5UPRo2xr4WBtIR5-ysKXIJo1Ku9arKvXXqxVo48Np2WL4nrsbEePZg_9YSBKqK9cCDMUtuQJG73lTQVsL-OGxNDqCxw-OmDIcq0NrBTZAREbTojie0O48cH0S6zu2zpoPc7cBsHyK3Ox9j9uWh7jq2JrBNQDvsppprTsCkvxwE-LFGHB6BWKVEUD_02mUvi6GRPw5uVKXpzpJRgHP1IoCDlWQeJpMq'
-        },
-        {
-            id: 3,
-            title: 'Lady Bird Bicycle - Pink',
-            price: '3,000',
-            location: 'GD-2 Hostel',
-            time: '5 hours ago',
-            seller: 'Ankit Singh',
-            trusted: true,
-            verified: true,
-            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA1oAq9oJw-GCn2vFympsxikVt_sjlosR1CFNi2aHYT7PeXMZ6Rj7OptEl9Vxl6n2AXg7OQNaFauQqehjRNZAds0M4_yZb844Fvr51bwpaBODLYh8g2BaoFKIbdRh5PM3M8pdy_1ZBK7mO0Al_0ZzScUKRwv8on-8DKtB8ruq1yIF_4g5-xkYc9ud89g1GItOLlPpWKPpiUSnujg631ZNk8bvhVqdhlQvV2xBmtCtYqR3puhZYogdxi3-kir_ekVkGCy51cAQxuNFMG'
-        },
-        {
-            id: 4,
-            title: 'Standard Cycle - Needs Repair',
-            price: '1,200',
-            location: 'Main Gate',
-            time: 'Yesterday',
-            seller: 'Vikram',
-            trusted: false,
-            verified: false,
-            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBaDiZvLvFON66gjk90-1F_YBbugbB3OwyEpLpExj7DRs7hBlYf3ehYjk_JHS8Kb1mpAVrF-fFIZspO74MYo4ZKkAO_ik0QkOO-WpyctFtXBHx72J-yxO2mLys_o5ljXwiw2jBm9ob17_7nVVd0hDxPiiHWWJa2OQuQ7ScwT_HVHMml2VyYHbqL2x7cjD5NvM__hLLeHcwVo3EWyVOExoUqRImjOqmcb_tKHQwKYZY2jprZggWwEFugmqZevOt5c_yIy6di6fTtAWCz'
-        },
-        {
-            id: 5,
-            title: 'Compact Folding Bicycle',
-            price: '8,500',
-            location: 'BH-3 Hostel',
-            time: '3 days ago',
-            seller: 'Sneha Gupta',
-            trusted: true,
-            verified: true,
-            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD7qyxqIDgMLuuF36xa69k_-tBKtHxCQpCAJwJAjKYbnyGhpIyqQleKacBpFAareATOX3AL5VEQVWb6FzQySclpTenYjw7JNAW-qeeLX9PuG5CCHi30RGRiQA9yjAWnqjM0HkEs8vxJBt2OUS67chxc2qTKw3bNLMYjKATMBfO5aaq0YoV0kjGoUy8Ls-DMzI2X7C0hoOCvVQPMMaT3ssegYv2t2NoLmJ1zkuOAV1uUcR2k4v2m_zXPWLjsvsYcd1SxZVYsJB4YywH0'
-        },
-        {
-            id: 6,
-            title: 'Electric E-Bike - Mint Condition',
-            price: '15,000',
-            location: 'Law Gate',
-            time: '1 week ago',
-            seller: 'Amit Verma',
-            trusted: true,
-            verified: false,
-            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDf_wLCpIMFoFozJVZ1xi2ScoreT2FzUqvh6z7JHG0zGuvAy1t7Yi6Bf-3jpQJ9e42t789imyYtOG2Jlhx2I5GF2M8yHlkZ1fIiTKBHD0ybmVxZXlzJ-fC1vvG1HETcQdWQ7noRlY1txkdlFnuWDjpaPX1k7XW6tOXq7JkuPGlE5V_iwrQ1SMQZT0rkFDKIRVPbbcDPLLlaNmXt8dabcgdhXFArWL_A_O1OvPa7bnXzjPZFt5tVVIH28-29o5f8NZTuSJjCoOe-h3FW'
-        }
-
-    ];
-
-    useEffect(() => {
-        const fetchCategory = async () => {
-            const res = await axios.get('/api/products/getallcategory');
-            setCategory(res.data.categories);
-        }
-        fetchCategory();
-    }, []);
-    console.log(categories)
 
     return (
         <div className="bg-[#f8f7f6] min-h-screen font-sans">
@@ -126,7 +46,7 @@ const Marketplace = () => {
                     {/* Results Header */}
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
                         <p className="text-sm text-gray-500">
-                            Showing <span className="font-bold text-gray-900">124</span> results for <span className="text-orange-600 font-bold">"{activeCategory}"</span>
+                            Showing <span className="font-bold text-gray-900">{products.length}</span> results for <span className="text-orange-600 font-bold">"{activeCategory}"</span>
                         </p>
                         <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-100 shadow-sm">
                             <span className="text-sm text-gray-500">Sort by:</span>

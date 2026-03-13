@@ -1,7 +1,7 @@
 const Product = require("../../model/products.model");
 const AddProduct = async (req, res) => {
     try {
-        const { name, description, price, category } = req.body;
+        const { name, description, price, category , condition } = req.body;
         
         // req.user is populated by the verifyToken middleware
         if (!req.user) {

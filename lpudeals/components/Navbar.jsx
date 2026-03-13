@@ -5,11 +5,11 @@ import Link from "next/link";
 
 
 function Navbar() {
-    const { setCart, cart } = useContext(AppContext);
+    const { cart, user, isLoggedIn, logout } = useContext(AppContext);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-    const [isSearchOpen, setIsSearchOpen] = useState(false); // For mobile search toggle
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
 
     return (
         <nav className="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
@@ -146,19 +146,27 @@ function Navbar() {
                             {/* User Dropdown */}
                             {isUserMenuOpen && (
                                 <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden animation-fade-in">
-                                    <div className="p-3 border-b border-gray-100 bg-orange-50/50">
-                                        <p className="text-sm font-semibold text-gray-900">User Name</p>
-                                        <p className="text-xs text-gray-500">user@example.com</p>
-                                    </div>
-                                    <ul className="py-2 text-sm text-gray-700">
-                                        <li><Link href="/dashboard" className="block px-4 py-2 hover:bg-orange-50 hover:text-orange-600">My Listings</Link></li>
-                                        <li><Link href="/addproduct" className="block px-4 py-2 hover:bg-orange-50 hover:text-orange-600">Add Sell Items</Link></li>
-
-                                        <li><Link href="#" className="block px-4 py-2 hover:bg-orange-50 hover:text-orange-600">Wishlist</Link></li>
-                                    </ul>
-                                    <div className="border-t border-gray-100 py-2">
-                                        <Link href="#" className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Sign out</Link>
-                                    </div>
+                                    {isLoggedIn && user ? (
+                                        <>
+                                            <div className="p-3 border-b border-gray-100 bg-orange-50/50">
+                                                <p className="text-sm font-semibold text-gray-900">{user.name || 'Student'}</p>
+                                                <p className="text-xs text-gray-500">{user.email}</p>
+                                            </div>
+                                            <ul className="py-2 text-sm text-gray-700">
+                                                <li><Link href="/dashboard" className="block px-4 py-2 hover:bg-orange-50 hover:text-orange-600">My Listings</Link></li>
+                                                <li><Link href="/addproduct" className="block px-4 py-2 hover:bg-orange-50 hover:text-orange-600">Add Sell Items</Link></li>
+                                                <li><Link href="#" className="block px-4 py-2 hover:bg-orange-50 hover:text-orange-600">Wishlist</Link></li>
+                                            </ul>
+                                            <div className="border-t border-gray-100 py-2">
+                                                <button onClick={() => { logout(); setIsUserMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">Sign out</button>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div className="py-2">
+                                            <Link href="/login" className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 font-medium">Login</Link>
+                                            <Link href="/register" className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 font-medium">Register</Link>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>

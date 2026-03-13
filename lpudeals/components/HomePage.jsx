@@ -1,17 +1,9 @@
 'use client';
-import React from 'react';
-import { useState , useEffect } from 'react';
-import axios from 'axios';
+import React, { useContext } from 'react';
+import AppContext from '../app/context/AppContext';
 
 function HomePage() {
-    const [categories , setCategories] = useState([]);
-    useEffect(() => {
-        const fetchCategory = async () => {
-            const res = await axios.get('/api/products/getallcategory');
-            setCategories(res.data.categories);
-        }
-        fetchCategory();
-    }, []);
+    const { categories } = useContext(AppContext);
     return (
         <div className="bg-gray-50 font-sans text-gray-900">
             {/* Hero Section */}

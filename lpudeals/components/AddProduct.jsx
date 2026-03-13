@@ -1,8 +1,11 @@
 'use client';
 import React, { useState } from 'react';
+import { useContext } from 'react';
+import AppContext from '../app/context/AppContext';
 
 function AddProduct() {
     const [preview, setPreview] = useState(null);
+    const {categories} = useContext(AppContext);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -54,14 +57,12 @@ function AddProduct() {
                                     </label>
                                     <select
                                         id="category"
+                                        name='category'
                                         className="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none bg-gray-50/50 appearance-none"
                                     >
-                                        <option>Electronics</option>
-                                        <option>Academic Gear</option>
-                                        <option>Books</option>
-                                        <option>Clothing</option>
-                                        <option>Hostel Utilities</option>
-                                        <option>Other</option>
+                                        {categories.map((cat) => (
+                                            <option key={cat.name} value={cat._id}>{cat.name}</option>
+                                        ))}
                                     </select>
                                 </div>
                                 <div>

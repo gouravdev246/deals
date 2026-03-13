@@ -1,11 +1,13 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import AppContext from '../app/context/AppContext';
 
 function LoginPage() {
     const router = useRouter();
+    const { login } = useContext(AppContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -17,6 +19,7 @@ function LoginPage() {
         setMsg('');
         try {
             const res = await axios.post('/api/auth/login', { email, password });
+            login(res.data.user); // Save user in context + localStorage
             setMsg('Login successful!');
             setTimeout(() => router.push('/'), 1500);
         } catch (err) {
