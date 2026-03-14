@@ -27,6 +27,7 @@ export const AppWrapper = ({ children }) => {
 
     // ─── Products State ───
     const [products, setProducts] = useState([]);
+    const [homepageProducts , sethomePageProducts  ] = useState(products[2])
 
     // ─── Loading States ───
     const [loading, setLoading] = useState(true);
@@ -169,6 +170,7 @@ export const AppWrapper = ({ children }) => {
             products,
             refreshProducts,
             refreshCategories, 
+            homepageProducts,
 
             setSearchProduct , 
             searchProduct

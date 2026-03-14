@@ -6,7 +6,7 @@ import { Markup } from 'interweave';
 
 
 function HomePage() {
-    const { categories } = useContext(AppContext);
+    const { categories , products , homepageProducts } = useContext(AppContext);
     return (
         <div className="bg-gray-50 font-sans text-gray-900">
             {/* Hero Section */}
@@ -85,15 +85,10 @@ function HomePage() {
                         </a>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {[
-                            { title: 'Data Structures & Algorithms', price: '850', loc: 'Block 34', desc: 'Hardly used, 2nd Edition book for CSE students.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBKr2LOgeJaczPbTuNYG02MmEnpTdi3OzcFwOSOflbvklxskRuDd1KLVxY4qkL2zW-H77qEISD7yPTwLYhcdd6IB2kLf4aNBAF6q78x9leShyqorIPNjwXcv19J4pdZlcwY4eJUcHzwtn9Qdl_RU3cYVuQexedJzYk-hXxd5RDCV5wgQtEzZlPNXJAMW_PDBfJk5vrNmTh1rsWBPYdQqX4tDW7n7RCM_X6_wjOl1Aj2O4AcQ7Hc2-RSQT8NNrK9nd4eaXlc3tklDblo' },
-                            { title: 'Mountain Gear Cycle', price: '4,200', loc: 'Hostel 4', desc: '6-speed gear cycle in perfect condition.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDhiUFvQeT64HWR3PseAxTQHykVOE9rQcBv_SBBoUXgRddVGj5b3ho56f2QKeibK9ccVQAcL_Tpfg-TZfsAtT9iJYA1ibuq1ssPrV8DiOIbDgqRintwoK1F3oBR_HYB33h0PLkBK0DkTz7egWsebuXT71tq32S8mU9Az09pcfRNxQiZ6Lcu00MD731V3Me71Uhi4IoxGxIuyEkVnIUnEFObTd8TWEjdZizhapBtilCmEeAIJnDPFnP4UXND9AmKeXpD_4CwU061EYc7' },
-                            { title: 'Noise Smartwatch', price: '1,500', loc: 'Uni-Mall', desc: '6 months old, all features working perfectly.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCCfavS0eBvMuWEcT24CyhQRuujTs4sT04_djguGLfBNkCXOGbeI4hDzvJ6KpRizjjIYopwOj-k7MSjlIoOfu9K8q0N7fqycSmbt7xHJYoI8HBRO9A5ObFmLJg5jmihx3_umq-N2jMchJM-ufFQZoZf9e715NhZAM4-zFApgb0P4_n91hMggBAMmRM94UDwWKVfFnKNYlZcN96n_HYGlhgZIG08iA9GgG9QIHtFteYbOZ_uldxf8WcGpDi8_5eLaO7eE97u1-tL4TyN' },
-                            { title: 'LED Study Lamp', price: '350', loc: 'BH 1', desc: 'Adjustable brightness, perfect for night study.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAxNnL4KYDmEA-mx4qEKz1DPENOsEnXuKLC6HrcnqlnDfin1-baWPSHfm1m9z8jfcaVc1Nq2fPTKIyo4fLTgxtoFjfq32XR_lOVpC7oQObpIVgbdsq6V47O_NHym8etEOm0ML_QdadDK4NGEP63n5iJAKtK1klq8JJUiYARbDNkpvg4ge9yPWcmGHST3GCtZTRykfT9xZip3NViDk8UnykaPuE0ChSUVMC43ak-6jOONwvkS11bB-kpAXydacSXpuSUL_P4HpeYv9is' }
-                        ].map((item, idx) => (
-                            <div key={idx} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-2xl transition-all">
+                        {products.slice(0, 4).map((item) => (
+                            <div key={item._id} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-2xl transition-all">
                                 <div className="relative h-64 overflow-hidden">
-                                    <img alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src={item.img} />
+                                    <img alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src={item?.image?.[0]} />
                                     <div className="absolute top-4 left-4">
                                         <span className="bg-white/90 backdrop-blur-sm text-gray-900 px-3 py-1 rounded-full text-sm font-bold shadow-sm">₹{item.price}</span>
                                     </div>
@@ -103,8 +98,8 @@ function HomePage() {
                                         <span className="material-icons text-orange-600 text-sm">location_on</span>
                                         <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">LPU Campus - {item.loc}</span>
                                     </div>
-                                    <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-1">{item.title}</h3>
-                                    <p className="text-gray-500 text-sm mb-4">{item.desc}</p>
+                                    <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-1">{item.name}</h3>
+                                    <p className="text-gray-500 text-sm mb-4">{item.description}</p>
                                     <button className="w-full py-2 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-orange-600 hover:text-white transition-colors">Details</button>
                                 </div>
                             </div>
@@ -167,7 +162,7 @@ function HomePage() {
                             <ul className="space-y-4">
                                 <li><a className="text-gray-600 hover:text-orange-600 transition-colors" href="/seftytips">Safety Tips</a></li>
                                 <li><a className="text-gray-600 hover:text-orange-600 transition-colors" href="#">FAQs</a></li>
-                                <li><a className="text-gray-600 hover:text-orange-600 transition-colors" href="#">Contact Admin</a></li>
+                                <li><a className="text-gray-600 hover:text-orange-600 transition-colors" href="/contact-admin">Contact Admin</a></li>
                                 <li><a className="text-gray-600 hover:text-orange-600 transition-colors" href="/privecy-policy">Privacy Policy</a></li>
                             </ul>
                         </div>

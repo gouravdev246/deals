@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const authRouter = require('../src/routes/auth.route')
 const otpRouter = require('../src/routes/otp.route')
 const productRouter = require('../src/routes/product.route')
+const UserRouter = require('../src/routes/user.route')
 require("dotenv").config();
 
 
@@ -19,6 +20,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRouter)
 app.use('/api/otp', otpRouter)
 app.use('/api/products', productRouter)
+app.use('/api/user' , UserRouter)
 
 
 
