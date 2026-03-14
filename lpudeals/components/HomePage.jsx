@@ -1,13 +1,27 @@
 'use client';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import AppContext from '../app/context/AppContext';
 import parse from 'html-react-parser';
 import { Markup } from 'interweave';
 import Link from 'next/link';
+import axios from 'axios';
 
 
 function HomePage() {
     const { categories, products, homepageProducts } = useContext(AppContext);
+    const [count , setCount] = useState('') ;
+
+    useEffect(() => {
+        const userCount = async () => {
+            try {
+                const res = await axios.get('/api/user/count');
+                setCount(res.data.count);
+            } catch (err) {
+                console.error("Failed to fetch user count:", err);
+            }
+        };
+        userCount();
+    }, []);
     return (
         <div className="bg-gray-50 font-sans text-gray-900">
             {/* Hero Section */}
@@ -40,7 +54,7 @@ function HomePage() {
                                     <img alt="Student" className="w-10 h-10 rounded-full border-2 border-white bg-gray-200" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5oLQi6O41rSLBA4WJqNMgdYC-EfdQzwT4ed1gVjdWu7-hdOvzre1k__ARRPMBCQXqhUoNuUYYw5dV4oGXzzCJGxNLRwBq4ku_LOv0PuL8uCFPjtBAUwlmPCY0jV33mKr8a5MMBi-zBB9HKYaTVWx5ms2XvBcZ2rVOnAbnymR0uuTdTMNuV42qLSubSh6G21LPwnlrIWoaGDyLAzu2_QJQ_0bTbUV6riE8G9kk_RJDEzubMDgIft1Hv0m8BgFYiUfW1pT7lpCxBuZN" />
                                     <img alt="Student" className="w-10 h-10 rounded-full border-2 border-white bg-gray-200" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChggXqPFzMXfEjNw2ullQZkmP48nkLxPwS6OysaBrhmg33xZ75cWskQuNBEHcHqaJXVKzS420PpxS8C7IKFMEVyEkSwHys0WZ7xrALn-hfmpx-EWKXfxKl2d2D-ebscpvbzofG_TSvL_MYKD2TKVk17sXGYxGJRFqkYXcjoikzukPqTHanLuZIRvDtLyxoNYf1jsqA1Nrf2JlXL4-n91UXWT5RB7Icb4mspqSvbF4XnSAG-rDDRDNOehodKYw9Wp-VWv3hzr3dNeBl" />
                                 </div>
-                                <p className="text-sm">Join <span className="font-bold text-gray-900">5,000+</span> students trading today</p>
+                                <p className="text-sm">Join <span className="font-bold text-gray-900">{count}</span> students trading today</p>
                             </div>
                         </div>
                         <div className="relative hidden lg:block">

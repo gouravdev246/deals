@@ -217,7 +217,8 @@ const ItemDetails = ({ id }) => {
                                     </div>
                                     <button className="text-[10px] font-black text-red-400 hover:text-red-600 uppercase tracking-widest flex items-center gap-1">
                                         <span className="material-symbols-outlined text-sm! text-red-500">report</span>
-                                        Report
+
+                                      <Link href="/contact-admin" >Report</Link>
                                     </button>
                                 </div>
                             </div>
