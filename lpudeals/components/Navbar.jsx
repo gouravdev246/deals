@@ -259,13 +259,13 @@ function Navbar() {
             {/* Mobile Menu Backdrop */}
             {isMobileMenuOpen && (
                 <div 
-                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] lg:hidden transition-opacity cursor-pointer"
+                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 lg:hidden transition-opacity cursor-pointer"
                     onClick={() => setIsMobileMenuOpen(false)}
                 />
             )}
 
             {/* Mobile Menu Side-Sheet */}
-            <div className={`fixed top-0 left-0 bottom-0 w-[280px] bg-white z-[70] lg:hidden transform transition-transform duration-300 ease-in-out shadow-2xl ${
+            <div className={`fixed top-0 left-0 bottom-0 w-[280px] bg-white z-50 lg:hidden transform transition-transform duration-300 ease-in-out shadow-2xl ${
                 isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
             }`}>
                 <div className="flex flex-col h-full">

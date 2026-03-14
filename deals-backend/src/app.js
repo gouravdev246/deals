@@ -6,7 +6,14 @@ const authRouter = require('../src/routes/auth.route')
 const otpRouter = require('../src/routes/otp.route')
 const productRouter = require('../src/routes/product.route')
 const UserRouter = require('../src/routes/user.route')
+const connectDB = require("./db/connectDB");
 require("dotenv").config();
+
+// Ensure DB is connected for every request (cached by mongoose)
+app.use(async (req, res, next) => {
+    await connectDB();
+    next();
+});
 
 
 app.use(express.json());
