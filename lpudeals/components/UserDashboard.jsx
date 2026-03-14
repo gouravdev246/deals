@@ -28,7 +28,7 @@ const UserDashboard = () => {
             alert(err.response?.data?.message || "Failed to delete product");
         }
     };
-console.log(userProducts)
+
 
 
  

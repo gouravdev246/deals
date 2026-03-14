@@ -104,7 +104,7 @@ function LoginPage() {
                                     <input
                                         type="email"
                                         className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 bg-gray-50/50 text-gray-900 focus:border-orange-500 focus:bg-white focus:ring-0 transition-all outline-none"
-                                        placeholder="registration_no@lpu.in"
+                                        placeholder="vertos@gmail.com"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         required
@@ -144,13 +144,13 @@ function LoginPage() {
             {/* Footer */}
             <footer className="p-8 text-center border-t border-gray-100 bg-white">
                 <div className="flex flex-col md:flex-row justify-center items-center gap-4 text-sm text-gray-500 font-medium">
-                    <span>© 2024 LpuDeals. Exclusive to LPU Students.</span>
+                    <span>© 2026 LpuDeals. Exclusive to LPU Students.</span>
                     <div className="flex gap-4">
-                        <Link href="#" className="hover:text-orange-600 transition-colors">Terms</Link>
+                        <Link href="/terms" className="hover:text-orange-600 transition-colors">Terms</Link>
                         <span className="hidden md:inline text-gray-300">•</span>
-                        <Link href="#" className="hover:text-orange-600 transition-colors">Privacy</Link>
+                        <Link href="/privecy-policy" className="hover:text-orange-600 transition-colors">Privacy</Link>
                         <span className="hidden md:inline text-gray-300">•</span>
-                        <Link href="#" className="hover:text-orange-600 transition-colors">Safety</Link>
+                        <Link href="/seftytips" className="hover:text-orange-600 transition-colors">Safety</Link>
                     </div>
                 </div>
             </footer>

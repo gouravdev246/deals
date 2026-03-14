@@ -9,7 +9,7 @@ const ProtectedRoute = ({ children }) => {
     const pathname = usePathname();
 
     // Define routes that ANYONE can see (Lower-case matches)
-    const publicRoutes = ['/', '/products', '/forget-pass', '/login', '/register'];
+    const publicRoutes = ['/', '/products', '/forgetpass', '/login', '/register' , '/privecy-policy' , '/seftytips' , '/terms'];
     
     // Check if the current path is a dynamic product page (e.g., /products/123)
     const isDynamicProductPage = pathname.startsWith('/products/');

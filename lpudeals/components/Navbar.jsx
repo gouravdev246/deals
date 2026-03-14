@@ -185,9 +185,10 @@ function Navbar() {
                                                 <p className="text-xs text-gray-500">{user.email}</p>
                                             </div>
                                             <ul className="py-2 text-sm text-gray-700">
+                                                <li><Link href="/profile" className="block px-4 py-2 hover:bg-orange-50 hover:text-orange-600">My Profile</Link></li>
                                                 <li><Link href="/dashboard" className="block px-4 py-2 hover:bg-orange-50 hover:text-orange-600">My Listings</Link></li>
                                                 <li><Link href="/addproduct" className="block px-4 py-2 hover:bg-orange-50 hover:text-orange-600">Add Sell Items</Link></li>
-                                                <li><Link href="#" className="block px-4 py-2 hover:bg-orange-50 hover:text-orange-600">Wishlist</Link></li>
+                                                {/* <li><Link href="#" className="block px-4 py-2 hover:bg-orange-50 hover:text-orange-600">Wishlist</Link></li> */}
                                             </ul>
                                             <div className="border-t border-gray-100 py-2">
                                                 <button onClick={() => { logout(); setIsUserMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">Sign out</button>
@@ -255,21 +256,85 @@ function Navbar() {
                 )}
             </div>
 
-            {/* Mobile Menu (Slide down/Overlay) */}
+            {/* Mobile Menu Backdrop */}
             {isMobileMenuOpen && (
-                <div className="lg:hidden border-t border-gray-100 bg-white">
-                    <div className="px-4 py-3 space-y-1">
-                        <Link href="#" className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-orange-50">Home</Link>
-                        <Link href="#" className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-orange-50">Best Sellers</Link>
-                        <Link href="#" className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-orange-50">Sell</Link>
-                        <Link href="#" className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-orange-50">Categories</Link>
-                        <div className="border-t border-gray-100 my-2 pt-2">
-                            <Link href="#" className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-orange-50">My Account</Link>
-                            <Link href="#" className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-orange-50">Order History</Link>
+                <div 
+                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] lg:hidden transition-opacity cursor-pointer"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                />
+            )}
+
+            {/* Mobile Menu Side-Sheet */}
+            <div className={`fixed top-0 left-0 bottom-0 w-[280px] bg-white z-[70] lg:hidden transform transition-transform duration-300 ease-in-out shadow-2xl ${
+                isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+            }`}>
+                <div className="flex flex-col h-full">
+                    {/* Menu Header */}
+                    <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-orange-50/30">
+                        <Link href="/" className="flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
+                            <span className="text-xl font-bold text-orange-600 tracking-tight">LPU<span className="text-gray-900">Deals</span></span>
+                        </Link>
+                        <button 
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="p-2 text-gray-400 hover:text-orange-600 hover:bg-orange-100 rounded-full transition-colors"
+                        >
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    {/* Menu Links */}
+                    <div className="flex-1 overflow-y-auto py-6 px-4 space-y-2">
+                        <div className="pb-4">
+                            <h4 className="px-3 text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Explore</h4>
+                            <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-3 rounded-xl text-base font-semibold text-gray-700 hover:text-orange-600 hover:bg-orange-50 transition-all">
+                                <span className="material-icons opacity-60">home</span> Home
+                            </Link>
+                            <Link href="/products" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-3 rounded-xl text-base font-semibold text-gray-700 hover:text-orange-600 hover:bg-orange-50 transition-all">
+                                <span className="material-icons opacity-60">storefront</span> All Products
+                            </Link>
+                            <Link href="/addproduct" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-3 rounded-xl text-base font-semibold text-gray-700 hover:text-orange-600 hover:bg-orange-50 transition-all">
+                                <span className="material-icons opacity-60">add_circle_outline</span> Sell an Item
+                            </Link>
+                        </div>
+
+                        <div className="pt-4 border-t border-gray-50">
+                            <h4 className="px-3 text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Personal</h4>
+                            {isLoggedIn && user ? (
+                                <>
+                                    <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-3 rounded-xl text-base font-semibold text-gray-700 hover:text-orange-600 hover:bg-orange-50 transition-all">
+                                        <span className="material-icons opacity-60">person</span> My Profile
+                                    </Link>
+                                    <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-3 rounded-xl text-base font-semibold text-gray-700 hover:text-orange-600 hover:bg-orange-50 transition-all">
+                                        <span className="material-icons opacity-60">list_alt</span> My Listings
+                                    </Link>
+                                    <button 
+                                        onClick={() => { logout(); setIsMobileMenuOpen(false); }}
+                                        className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 transition-all mt-4"
+                                    >
+                                        <span className="material-icons opacity-60">logout</span> Sign Out
+                                    </button>
+                                </>
+                            ) : (
+                                <div className="grid grid-cols-2 gap-3 mt-4 px-2">
+                                    <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-center py-3 rounded-xl text-sm font-bold border-2 border-orange-100 text-orange-600 hover:bg-orange-50 transition-all">
+                                        Login
+                                    </Link>
+                                    <Link href="/register" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-center py-3 rounded-xl text-sm font-bold bg-orange-600 text-white hover:bg-orange-700 transition-all">
+                                        Register
+                                    </Link>
+                                </div>
+                            )}
                         </div>
                     </div>
+
+                    {/* Menu Footer */}
+                    <div className="p-6 bg-gray-50 border-t border-gray-100">
+                        <p className="text-xs text-center text-gray-400 font-medium">© 2026 LPUDeals Marketplace</p>
+                    </div>
                 </div>
-            )}
+            </div>
         </nav>
     );
 }

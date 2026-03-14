@@ -1,6 +1,9 @@
 'use client';
 import React, { useContext } from 'react';
 import AppContext from '../app/context/AppContext';
+import parse from 'html-react-parser';
+import { Markup } from 'interweave';
+
 
 function HomePage() {
     const { categories } = useContext(AppContext);
@@ -54,7 +57,13 @@ function HomePage() {
                         {categories.map((cat) => (
                             <a key={cat.name} className="group flex flex-col items-center p-6 rounded-2xl bg-gray-50 hover:bg-orange-50 transition-all border border-gray-100 hover:border-orange-200" href="#">
                                 <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 transition-transform">
-                                    <span className="material-icons text-orange-600 text-3xl">{cat.icon}</span>
+                                    {cat.icon && cat.icon.includes('<svg') ? (
+                                        <div className="text-orange-600 w-10 h-10 flex items-center justify-center [&>svg]:w-full [&>svg]:h-full transition-all">
+                                            {parse(cat.icon)}
+                                        </div>
+                                    ) : (
+                                        <span className="material-icons text-orange-600 text-3xl">{cat.icon}</span>
+                                    )}
                                 </div>
                                 <span className="font-semibold text-gray-700 group-hover:text-orange-700">{cat.name}</span>
                             </a>
@@ -156,10 +165,10 @@ function HomePage() {
                         <div>
                             <h4 className="font-bold text-gray-900 mb-6 uppercase text-sm tracking-widest">Support</h4>
                             <ul className="space-y-4">
-                                <li><a className="text-gray-600 hover:text-orange-600 transition-colors" href="#">Safety Tips</a></li>
+                                <li><a className="text-gray-600 hover:text-orange-600 transition-colors" href="/seftytips">Safety Tips</a></li>
                                 <li><a className="text-gray-600 hover:text-orange-600 transition-colors" href="#">FAQs</a></li>
                                 <li><a className="text-gray-600 hover:text-orange-600 transition-colors" href="#">Contact Admin</a></li>
-                                <li><a className="text-gray-600 hover:text-orange-600 transition-colors" href="#">Privacy Policy</a></li>
+                                <li><a className="text-gray-600 hover:text-orange-600 transition-colors" href="/privecy-policy">Privacy Policy</a></li>
                             </ul>
                         </div>
                         <div>
