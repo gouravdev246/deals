@@ -3,10 +3,11 @@ import React, { useContext } from 'react';
 import AppContext from '../app/context/AppContext';
 import parse from 'html-react-parser';
 import { Markup } from 'interweave';
+import Link from 'next/link';
 
 
 function HomePage() {
-    const { categories , products , homepageProducts } = useContext(AppContext);
+    const { categories, products, homepageProducts } = useContext(AppContext);
     return (
         <div className="bg-gray-50 font-sans text-gray-900">
             {/* Hero Section */}
@@ -25,10 +26,12 @@ function HomePage() {
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                                 <button className="bg-orange-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-orange-700 hover:scale-105 transition-all shadow-xl shadow-orange-500/25">
-                                    Browse Products
+                                    <Link href="/products" >Browse Products</Link>
+
+                                    
                                 </button>
                                 <button className="bg-white border-2 border-gray-200 text-gray-700 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-50 transition-colors">
-                                    Sell Now
+                                   <Link href="/addproduct" >Sell Now</Link> 
                                 </button>
                             </div>
                             <div className="mt-8 flex items-center gap-4 justify-center lg:justify-start text-gray-500">
@@ -43,7 +46,7 @@ function HomePage() {
                         <div className="relative hidden lg:block">
                             <div className="absolute -top-10 -right-10 w-64 h-64 bg-orange-200/50 rounded-full blur-3xl"></div>
                             <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-orange-100/50 rounded-full blur-3xl"></div>
-                            <img alt="Campus Life" className="relative z-10 w-full h-[500px] object-cover rounded-3xl shadow-2xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSNDBHDu4NY5xBV_liw9Pn7myX6AUoHtWZD3LedQ5NSuDoklG-cPSzo6fvMMt9fjIYnE6DlrBRCpiyxz2Va9eptzsP5Uehfcxqct1ALXVsfohPJD2dLepLJhyDH9m1LUUfykuDrySGTALWJpGZfp0ZQ2VX1-ciNIaa028onDNBecII1hoS9-5ZqfwHsAiZVQR0Eb_Dine1VlLDsS5o7oS899-dQVztjNVqHTqJhBgTHJBbYYIYF8j9853PXx4JCwggr0q5DyBFWFCx" />
+                            <img alt="Campus Life" className="relative z-10 w-full h-[500px] object-cover rounded-3xl shadow-2xl" src="homePagepic.png" />
                         </div>
                     </div>
                 </div>
@@ -131,7 +134,7 @@ function HomePage() {
                             </ul>
                         </div>
                         <div className="lg:w-1/2 min-h-[400px]">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d24443.697286873434!2d75.6667685508728!3d31.255386023262897!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391a5f5e9c489cf3%3A0x4049a5409d53c300!2sLovely%20Professional%20University!5e1!3m2!1sen!2sin!4v1773408285087!5m2!1sen!2sin" width="600" height="450" style={{border:0}} allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>                        </div>
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d24443.697286873434!2d75.6667685508728!3d31.255386023262897!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391a5f5e9c489cf3%3A0x4049a5409d53c300!2sLovely%20Professional%20University!5e1!3m2!1sen!2sin!4v1773408285087!5m2!1sen!2sin" width="600" height="450" style={{ border: 0 }} allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>                        </div>
                     </div>
                 </div>
             </section>
@@ -178,11 +181,22 @@ function HomePage() {
                         </div>
                     </div>
                     <div className="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                        <p className="text-gray-400 text-sm">© 2024 LpuDeals Community Project. Not affiliated with Lovely Professional University.</p>
+                        <p className="text-gray-400 text-sm">© 2026 LpuDeals Community Project. Not affiliated with Lovely Professional University.</p>
                         <div className="flex gap-6">
-                            <a className="text-gray-400 hover:text-orange-600 transition-colors" href="#"><i className="material-icons">facebook</i></a>
-                            <a className="text-gray-400 hover:text-orange-600 transition-colors" href="#"><i className="material-icons">alternate_email</i></a>
-                            <a className="text-gray-400 hover:text-orange-600 transition-colors" href="#"><i className="material-icons">camera_alt</i></a>
+                            {/* LinkedIn */}
+                            <a className="text-gray-400 hover:text-orange-600 transition-colors" href="https://www.linkedin.com/in/gouravdev/">
+                                <i className="material-icons">business</i>
+                            </a>
+
+                            {/* GitHub */}
+                            <a className="text-gray-400 hover:text-orange-600 transition-colors" href="https://www.linkedin.com/in/shashank-shekhar-ojha48/">
+                                <i className="material-icons">code</i>
+                            </a>
+
+                            {/* Instagram */}
+                            <a className="text-gray-400 hover:text-orange-600 transition-colors" href="https://github.com/gouravdev246/deals.git">
+                                <i className="material-icons">camera_alt</i>
+                            </a>
                         </div>
                     </div>
                 </div>

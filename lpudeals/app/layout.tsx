@@ -10,6 +10,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "LPU Deals | Campus Marketplace",
   description: "Exclusive second-hand marketplace for Lovely Professional University students.",
+  icons: {
+    icon: "/iconlogo.png",
+  }
 };
 
 export default function RootLayout({
