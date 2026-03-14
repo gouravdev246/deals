@@ -6,7 +6,7 @@ const OTP = require('../../model/otp.model')
 
 const registerUser = async (req , res)=>{
     try{
-        const {name , regid , email , password , otp} = req.body 
+        const {name , regid , email ,phone, hostel='Not Specified' , password , otp} = req.body 
         const user  = await User.findOne({email})
         if(user){
             return res.status(400).json({
@@ -25,6 +25,8 @@ const registerUser = async (req , res)=>{
             name ,
             regid ,
             email ,
+            phone ,
+            hostel ,
             password : hashedPassword
         })
         const token = jwt.sign({

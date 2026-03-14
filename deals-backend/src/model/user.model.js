@@ -19,6 +19,14 @@ const userSchema = new mongoose.Schema({
         lowercase : true ,
         trim : true ,
     },
+    phone : {
+        type: Number ,
+        require : true 
+
+    } ,
+    hostel : {
+        type : String
+    } ,
     password : {
         type : String ,
         require : true ,
