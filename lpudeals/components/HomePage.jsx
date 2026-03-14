@@ -116,8 +116,10 @@ function HomePage() {
                                         <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">LPU Campus - {item.loc}</span>
                                     </div>
                                     <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-1">{item.name}</h3>
-                                    <p className="text-gray-500 text-sm mb-4">{item.description}</p>
-                                    <button className="w-full py-2 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-orange-600 hover:text-white transition-colors">Details</button>
+                                    <p className="text-gray-500 text-sm mb-4 line-clamp-2">
+                                        {item.description.length > 100 ? item.description.substring(0, 100) + "..." : item.description}
+                                    </p>
+                                    <button className="w-full py-2 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-orange-600 hover:text-white transition-colors"><Link href="/products">Details</Link></button>
                                 </div>
                             </div>
                         ))}

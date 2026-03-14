@@ -23,7 +23,8 @@ const AddProduct = async (req, res) => {
             description,
             price,
             image: imageFiles, // Array of URLs from Cloudinary
-            category,
+            category: category || null, // Handle empty string as null for ObjectId
+            condition: condition || "Used",
             user: req.user._id 
         });
 

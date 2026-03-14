@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Link from "next/link";
@@ -11,12 +11,28 @@ function Registration({ ...props }) {
         name: '',
         email: '',
         number: '', // mapping to regid
+        phone: '' ,
         password: '',
         confirmPassword: '',
         otp: ''
     });
     const [loading, setLoading] = useState(false);
     const [msg, setMsg] = useState('');
+    const [timer, setTimer] = useState(0);
+    const [canResend, setCanResend] = useState(true);
+
+    useEffect(() => {
+        let interval;
+        if (timer > 0) {
+            interval = setInterval(() => {
+                setTimer((prev) => prev - 1);
+            }, 1000);
+        } else {
+            setCanResend(true);
+            clearInterval(interval);
+        }
+        return () => clearInterval(interval);
+    }, [timer]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,9 +40,13 @@ function Registration({ ...props }) {
 
     const handleSendOTP = async () => {
         if (!formData.email) return alert("Please enter email first");
+        if (!canResend) return;
+
         try {
             const res = await axios.post('/api/otp/generateotp', { email: formData.email });
             alert(res.data.message || res.data || "OTP Sent");
+            setTimer(60);
+            setCanResend(false);
         } catch (err) {
             console.error("OTP Error:", err);
             const errorMessage = err.response?.data?.message || err.response?.data || "Failed to send OTP";
@@ -46,6 +66,7 @@ function Registration({ ...props }) {
                 name: formData.name,
                 email: formData.email,
                 regid: formData.number,
+                phone : formData.phone ,
                 password: formData.password,
                 otp: formData.otp
             });
@@ -79,7 +100,14 @@ function Registration({ ...props }) {
                                 <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
                                 <div className="flex gap-2">
                                     <input type="email" name="email" id="email" value={formData.email} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="vertos@gmail.com" required />
-                                    <button type="button" onClick={handleSendOTP} className="text-white bg-orange-600 hover:bg-orange-700 rounded-lg text-xs px-3 py-2">OTP</button>
+                                    <button 
+                                        type="button" 
+                                        onClick={handleSendOTP} 
+                                        disabled={!canResend}
+                                        className={`text-white rounded-lg text-xs px-3 py-2 transition-colors ${canResend ? 'bg-orange-600 hover:bg-orange-700' : 'bg-gray-400 cursor-not-allowed'}`}
+                                    >
+                                        {canResend ? 'OTP' : `Resend in ${timer}s`}
+                                    </button>
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
@@ -91,6 +119,10 @@ function Registration({ ...props }) {
                                     <label htmlFor="otp" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">OTP</label>
                                     <input type="text" name="otp" id="otp" value={formData.otp} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="123456" required />
                                 </div>
+                            </div>
+                            <div>
+                                <label htmlFor="phone" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Whatsapp Number</label>
+                                <input type="number" name="phone" id="phone"  value={formData.phone} onChange={handleChange} placeholder="+91 - - - - - - - - " className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
                             </div>
                             <div>
                                 <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>

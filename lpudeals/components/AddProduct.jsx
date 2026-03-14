@@ -13,8 +13,15 @@ function AddProduct() {
         description: "",
         price: "",
         category: "",
-        condition: "",
+        condition: "New",
     });
+
+    // Set default category when categories are loaded
+    React.useEffect(() => {
+        if (categories && categories.length > 0 && !product.category) {
+            setProduct(prev => ({ ...prev, category: categories[0]._id }));
+        }
+    }, [categories]);
 
     const handleImageChange = (e) => {
         const files = Array.from(e.target.files);
@@ -142,6 +149,7 @@ function AddProduct() {
                                             className="block w-full pl-9 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none bg-gray-50/50"
                                             placeholder="0.00"
                                             value={product.price}
+                                            min={0}
                                             onChange={(e) => setProduct({...product , price: e.target.value})}
                                         />
                                     </div>
@@ -163,7 +171,7 @@ function AddProduct() {
                                     className="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none bg-gray-50/50 resize-none"
                                     placeholder="Describe your product condition, usage time, and any key features..."
                                     value={product.description}
-                                    onChange={(e) => setProduct({...product , description: e.target.value})}
+                                    onChange={(e) => setProduct({...product , description: e.target.value})} required
                                 ></textarea>
                             </div>
 
