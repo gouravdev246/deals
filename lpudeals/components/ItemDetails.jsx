@@ -186,8 +186,14 @@ const ItemDetails = ({ id }) => {
                                 <div className="space-y-4 relative">
                                     <button 
                                         onClick={() => {
-                                            const phone = product?.user?.phone;
+                                            let phone = product?.user?.phone;
                                             if (phone) {
+                                                // Remove all non-digit characters (+, spaces, dashes)
+                                                phone = String(phone).replace(/\D/g, '');
+                                                // If number is 10 digits (no country code), add 91
+                                                if (phone.length === 10) {
+                                                    phone = '91' + phone;
+                                                }
                                                 const message = encodeURIComponent(`Hi ${product?.user?.name || 'Seller'}, I'm interested in your product "${product?.name}" listed on LPU Deals.`);
                                                 window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
                                             } else {
