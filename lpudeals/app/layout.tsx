@@ -76,8 +76,12 @@ export const metadata: Metadata = {
     images: ["/iconlogo.png"],
   },
   icons: {
-    icon: "/iconlogo.png",
-    apple: "/iconlogo.png",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/iconlogo.png", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+    shortcut: "/favicon.ico",
   },
   metadataBase: new URL("https://lpudeals.shop"),
   alternates: {
