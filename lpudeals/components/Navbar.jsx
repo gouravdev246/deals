@@ -128,7 +128,7 @@ function Navbar() {
                         </button>
 
                         {/* Cart Dropdown */}
-                        <div className="relative">
+                        {/* <div className="relative">
                             <button
                                 onClick={() => setIsCartOpen(!isCartOpen)}
                                 className="flex items-center gap-2 p-2 text-gray-700 hover:text-orange-600 rounded-lg hover:bg-orange-50 transition-all relative"
@@ -142,10 +142,10 @@ function Navbar() {
                                         {cart.length}
                                     </span>
                                 )}
-                            </button>
+                            </button> */}
 
                             {/* Cart Dropdown Menu */}
-                            {isCartOpen && (
+                            {/* {isCartOpen && (
                                 <div className="absolute right-0 mt-3 w-80 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden animation-fade-in text-center p-8">
                                     <span className="material-icons text-5xl text-gray-200 mb-4">shopping_basket</span>
                                     <h3 className="font-bold text-gray-900 mb-2">Your Cart is Empty</h3>
@@ -159,7 +159,7 @@ function Navbar() {
                                     </Link>
                                 </div>
                             )}
-                        </div>
+                        </div> */}
 
                         {/* User Profile */}
                         <div className="relative">

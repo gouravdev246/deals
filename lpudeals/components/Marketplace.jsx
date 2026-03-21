@@ -184,9 +184,9 @@ const Marketplace = () => {
             </main>
 
             {/* Floating Action Button for Mobile */}
-            <button className="fixed bottom-6 right-6 lg:hidden w-14 h-14 bg-orange-600 text-white rounded-full shadow-2xl flex items-center justify-center z-50 hover:scale-110 transition-transform active:scale-95">
+            {/* <button className="fixed bottom-6 right-6 lg:hidden w-14 h-14 bg-orange-600 text-white rounded-full shadow-2xl flex items-center justify-center z-50 hover:scale-110 transition-transform active:scale-95">
                 <span className="material-icons text-3xl">add</span>
-            </button>
+            </button> */}
 
             {/* Footer */}
             <footer className="mt-20 border-t border-gray-100 bg-white py-12">
