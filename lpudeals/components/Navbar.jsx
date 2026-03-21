@@ -5,11 +5,10 @@ import Link from "next/link";
 
 
 function Navbar() {
-    const { cart, user, isLoggedIn, logout, searchProduct, setSearchProduct, products } = useContext(AppContext);
+    const { cart, user, isLoggedIn, logout, searchProduct, setSearchProduct, products, mobileSearchOpen, setMobileSearchOpen } = useContext(AppContext);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
 
     // Filter products for the search dropdown
     const searchResults = searchProduct.trim() !== "" 
@@ -119,7 +118,7 @@ function Navbar() {
 
                         {/* Mobile Search Toggle */}
                         <button
-                            onClick={() => setIsSearchOpen(!isSearchOpen)}
+                            onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
                             className="lg:hidden p-2 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-full transition-colors"
                         >
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -207,7 +206,7 @@ function Navbar() {
                 </div>
 
                 {/* Mobile Search Bar (Expandable) */}
-                {isSearchOpen && (
+                {mobileSearchOpen && (
                     <div className="mt-4 lg:hidden pb-2 relative">
                         <form className="relative" onSubmit={(e) => e.preventDefault()}>
                             <input
@@ -234,7 +233,7 @@ function Navbar() {
                                             <Link 
                                                 key={p._id} 
                                                 href={`/products/${p._id}`}
-                                                onClick={() => { setSearchProduct(""); setIsSearchOpen(false); }}
+                                                onClick={() => { setSearchProduct(""); setMobileSearchOpen(false); }}
                                                 className="flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0"
                                             >
                                                 <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 shrink-0">

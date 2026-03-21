@@ -188,28 +188,7 @@ const UserDashboard = () => {
 
             </main>
 
-            {/* Mobile Tab Bar (Dashboard specific navigation) */}
-            <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex items-center justify-around py-3 md:hidden z-50 px-2 rounded-t-[1.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
-                <button className="flex flex-col items-center gap-1 text-orange-600">
-                    <span className="material-icons-round">dashboard</span>
-                    <span className="text-[10px] font-bold uppercase">Listings</span>
-                </button>
-                <button className="flex flex-col items-center gap-1 text-gray-400 hover:text-orange-600 transition-colors">
-                    <span className="material-icons-round">chat_bubble_outline</span>
-                    <span className="text-[10px] font-bold uppercase tracking-tighter">Messages</span>
-                </button>
-                <Link href="/addproduct" className="relative -mt-10 size-14 bg-orange-600 text-white rounded-2xl shadow-2xl shadow-orange-500/40 border-4 border-[#f8f7f6] flex items-center justify-center active:scale-90 transition-transform">
-                    <span className="material-icons-round text-3xl">add</span>
-                </Link>
-                <button className="flex flex-col items-center gap-1 text-gray-400 hover:text-orange-600 transition-colors">
-                    <span className="material-icons-round">favorite_border</span>
-                    <span className="text-[10px] font-bold uppercase">Saved</span>
-                </button>
-                <button className="flex flex-col items-center gap-1 text-gray-400 hover:text-orange-600 transition-colors">
-                    <span className="material-icons-round">person_outline</span>
-                    <span className="text-[10px] font-bold uppercase">Profile</span>
-                </button>
-            </nav>
+            {/* Mobile Tab Bar is now handled globally in layout */}
         </div>
     );
 };

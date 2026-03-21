@@ -6,6 +6,8 @@ import Navbar from "@/components/Navbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { Analytics } from "@vercel/analytics/next"
 
+import MobileTabBar from "@/components/MobileTabBar";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -125,6 +127,7 @@ export default function RootLayout({
           <ProtectedRoute>
             <Navbar />
             {children}
+            <MobileTabBar />
           </ProtectedRoute>
         </AppWrapper>
         <Analytics/>

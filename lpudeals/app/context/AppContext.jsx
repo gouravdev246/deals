@@ -33,6 +33,7 @@ export const AppWrapper = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     const [searchProduct , setSearchProduct] = useState('')
+    const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
 
     // ─── Hydrate user from localStorage on mount ───
     useEffect(() => {
@@ -173,7 +174,10 @@ export const AppWrapper = ({ children }) => {
             homepageProducts,
 
             setSearchProduct , 
-            searchProduct
+            searchProduct,
+
+            mobileSearchOpen,
+            setMobileSearchOpen
         }}>
             {children}
         </AppContext.Provider>
