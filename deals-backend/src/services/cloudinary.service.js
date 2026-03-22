@@ -13,11 +13,18 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
-        folder: "deals_products", // The folder name in your Cloudinary account
+        folder: "deals_products",
         allowed_formats: ["jpg", "png", "jpeg", "webp"],
+        resource_type: "auto",
+        transformation: [{ quality: "auto", fetch_format: "auto" }],
     },
 });
 
-const uploadImage = multer({ storage: storage });
+const uploadImage = multer({
+    storage: storage,
+    limits: {
+        fileSize: 50 * 1024 * 1024, // 50 MB max per file
+    },
+});
 
 module.exports = uploadImage;
