@@ -68,7 +68,7 @@ const ItemDetails = ({ id }) => {
                     <Link href="/products" className="hover:text-orange-600">Marketplace</Link>
                     <span className="material-symbols-outlined text-xs!">chevron_right</span>
                     <span className="text-gray-900 font-medium truncate max-w-[200px] md:max-w-none">
-                        {product?.title || 'MacBook Air M1'}
+                        {product?.name || 'Name Not Given '}
                     </span>
                 </nav>
 
