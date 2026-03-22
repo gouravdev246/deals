@@ -9,6 +9,7 @@ const getAllProducts = async (req , res)=>{
     try {
         // Fetch the subset of data using skip() and limit()
         const products = await Product.find()
+            .sort({ createdAt: -1 })
             .populate('user' , 'name')
             .populate('category' , 'name')
             .skip(skipIndex)

@@ -158,10 +158,10 @@ const UserDashboard = () => {
                                             {item.status === 'Active' ? 'Mark Sold' : 'Publish'}
                                         </button> */}
                                         <div className="flex gap-3 flex-1">
-                                            {/* <button className="flex-1 py-3 px-4 border-2 border-gray-50 font-black text-gray-600 text-xs rounded-xl hover:bg-gray-50 hover:text-orange-600 transition-all flex items-center justify-center gap-2 uppercase tracking-widest">
+                                            <Link href={`/editproduct/${item._id}`} className="flex-1 py-3 px-4 border-2 border-gray-50 font-black text-gray-600 text-xs rounded-xl hover:bg-orange-50 hover:text-orange-600 hover:border-orange-100 transition-all flex items-center justify-center gap-2 uppercase tracking-widest">
                                                 <span className="material-icons-round text-sm">edit</span>
                                                 Edit
-                                            </button> */}
+                                            </Link>
                                             <button className="p-3 border-2 border-red-50 text-red-400 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all flex items-center justify-center" onClick={() => deleteItem(item._id)}>
                                                 <span className="material-icons-round text-sm">delete_outline</span>
                                             </button>
