@@ -1,9 +1,11 @@
 'use client';
-import React, { useState , useEffect } from 'react';
+import React, { useState , useEffect , useContext } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
+import AppContext from "../app/context/AppContext";
 
 const ItemDetails = ({ id }) => {
+    const { products } = useContext(AppContext);
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -242,20 +244,15 @@ const ItemDetails = ({ id }) => {
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {[
-                            { id: 1, title: 'Dell XPS 13 - Core i7', price: '42,000', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBFZcprlmiY7yAWoM-INyw6fEfMNU6RcTRVXXmQZblCEBUmfyE497VoOh52vmFQjD8U5GBxgJB0MMXwt5jp9vMU87xFcWSBa3cH-dwGE_Ium11KA96BJCoVYrkQ8rwSV5_r0vYISQx3G81JKSQvjMXVkBhlrASyfdTsXKF_lIJUBrN58wbV89K5S2w5LRWKIbuRzYV3uVPgOrYPwRHzesdYM--g6nQE60uLIW9Ovq1q5y3CTWwX1UXIFaDGP4-pXWHpPgRGr9w50d-R' },
-                            { id: 2, title: 'iPad Pro 11-inch + Pencil', price: '35,000', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBfslFVggprkGV0nkQkwRVjr2ZZrJJPb0U_ODn52GyxSlL9QCjUHIRhS2UVfLrHwwEteghJJ7WiJHVWOgfIh2z0XSWBvtpHQTbehAjmcW9cLwZBTZv1UiWr0o1YruWMCq7TK3qRCH8YblKbQ0pOgx5P_2wzgvAo5BqldwTxr9xIP_roxw_YrQuO3YMXDjneWIGAoKPawODBzaPvkYncch-kQ-Q0s44Zr4ihlR9Ie55Xhz8OsKiHv8uwZPaC2D6-ikiaDrrbKuFqgFFP' },
-                            { id: 3, title: 'Sony XM4 Headphones', price: '12,500', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDortCF22AcnS_GryM-AIRW0F_gpgrtUK5x8Tbzt3DwFIud4gNR-Fr5RnU6Xv-Lehe2nh-usCK5h-TtPuCRNSXUGBm4sZ_cwDGVAgVlWP1kEXEKg3_QpH9p_oGAv5sYkGtG2TMOYavirR15BR_lgpjam1I5CAJEPDFe3aMqt5caJprMtQz05-YSAI4lGTljrymj9gxyI6dv4rW0IeAXgHLPlkj2jDgGY0XpwLdJTJfc-OHRYTtZz08fkBIbuwLsdv6jxqtNa1laG50Q' },
-                            { id: 4, title: 'iPhone 12 - 64GB', price: '28,000', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0E04DJ_ZDjD2-ONXn4-mfZs7O1cCfs5jAKWCkRD9SjeltJR2kKRiE1lV8mxNw6PmKIjacR0NEluE9onqK67Sbo8pzgjfKpCOyxIALayo4mM49c4uWKssdqEIbfQ9X4G-LY-Lx0PJ3I8aunJkA7nSr62sLCAvxBCI9p3ETLT0tI7J_1lgwqE2AaJDzkYWUqPTFNNhmgGi4t3MDBuhuLx-O7-RyCoWDqZg2dSceoxRY3RinD00OiKRJUyM1MP_JimFGuIJrCNf26G7A' }
-                        ].map((item) => (
-                            <div key={item.id} className="group cursor-pointer bg-white p-4 rounded-2xl border border-gray-50 hover:shadow-xl hover:border-orange-100 transition-all duration-300">
+                        {products.slice(0, 4).map((item) => (
+                            <div key={item._id} className="group cursor-pointer bg-white p-4 rounded-2xl border border-gray-50 hover:shadow-xl hover:border-orange-100 transition-all duration-300">
                                 <div className="aspect-square rounded-xl overflow-hidden mb-4 relative">
-                                    <img src={item.img} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                    <img src={item?.img?.[0] || item.image[0]} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                     <span className="absolute top-2 right-2 bg-white/90 backdrop-blur text-orange-600 p-2 rounded-xl shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
                                         <span className="material-symbols-outlined text-lg!">favorite</span>
                                     </span>
                                 </div>
-                                <h3 className="font-bold text-gray-900 text-sm truncate mb-1">{item.title}</h3>
+                                <h3 className="font-bold text-gray-900 text-sm truncate mb-1">{item.name}</h3>
                                 <p className="text-orange-600 font-black text-lg">₹{item.price}</p>
                             </div>
                         ))}
