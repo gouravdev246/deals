@@ -14,7 +14,7 @@ const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
         folder: "deals_products",
-        allowed_formats: ["jpg", "png", "jpeg", "webp"],
+        allowed_formats: ["jpg", "png", "jpeg", "webp", "heic", "heif"],
         resource_type: "auto",
         transformation: [{ quality: "auto", fetch_format: "auto" }],
     },

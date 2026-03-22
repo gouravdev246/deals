@@ -1,12 +1,65 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useContext } from 'react';
 import axios from 'axios';
 import AppContext from '../app/context/AppContext';
 
+// ─── Compress & convert any image (including HEIC from mobile) to JPEG ───
+const compressImage = (file, maxWidth = 1200, quality = 0.7) => {
+    return new Promise((resolve, reject) => {
+        // If file is already small enough (< 500KB), skip compression but still convert format
+        const skipResize = file.size < 500 * 1024;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                if (!skipResize && width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width);
+                    width = maxWidth;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                canvas.toBlob(
+                    (blob) => {
+                        if (!blob) {
+                            reject(new Error('Image compression failed'));
+                            return;
+                        }
+                        // Create a new file with .jpg extension so multer/cloudinary accepts it
+                        const compressedFile = new File(
+                            [blob],
+                            file.name.replace(/\.[^.]+$/, '') + '.jpg',
+                            { type: 'image/jpeg' }
+                        );
+                        resolve(compressedFile);
+                    },
+                    'image/jpeg',
+                    quality
+                );
+            };
+            img.onerror = () => reject(new Error('Failed to load image'));
+            img.src = e.target.result;
+        };
+        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.readAsDataURL(file);
+    });
+};
+
 function AddProduct() {
     const [previews, setPreviews] = useState([]);
     const [imageFiles, setImageFiles] = useState([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [compressionStatus, setCompressionStatus] = useState('');
+    const formRef = useRef(null);
     const {categories} = useContext(AppContext);
     const [product, setProduct] = useState({
         name: "",
@@ -23,23 +76,55 @@ function AddProduct() {
         }
     }, [categories]);
 
-    const handleImageChange = (e) => {
+    const handleImageChange = async (e) => {
         const files = Array.from(e.target.files);
-        setImageFiles(files);
+        if (files.length === 0) return;
 
-        // Generate previews for all selected files
-        const previewPromises = files.map((file) => {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result);
-                reader.readAsDataURL(file);
+        setCompressionStatus('Optimizing images...');
+
+        try {
+            // Compress all images client-side (converts HEIC/HEIF → JPEG, reduces size)
+            const compressedFiles = await Promise.all(
+                files.map((file) => compressImage(file))
+            );
+            setImageFiles(compressedFiles);
+
+            // Generate previews from the compressed files
+            const previewPromises = compressedFiles.map((file) => {
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.readAsDataURL(file);
+                });
             });
-        });
-        Promise.all(previewPromises).then(setPreviews);
+            const previewResults = await Promise.all(previewPromises);
+            setPreviews(previewResults);
+            setCompressionStatus('');
+        } catch (err) {
+            console.error('Image compression error:', err);
+            setCompressionStatus('');
+            // Fallback: use original files if compression fails
+            setImageFiles(files);
+            const previewPromises = files.map((file) => {
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.readAsDataURL(file);
+                });
+            });
+            Promise.all(previewPromises).then(setPreviews);
+        }
     };
 
     const AddProductAPI = async (e) => {
         e.preventDefault();
+
+        if (imageFiles.length === 0) {
+            alert('Please select at least one image');
+            return;
+        }
+
+        setIsSubmitting(true);
         try {
             const formData = new FormData();
             formData.append('name', product.name);
@@ -48,22 +133,39 @@ function AddProduct() {
             formData.append('category', product.category);
             formData.append('condition', product.condition);
 
-            // Append each image file with the key 'image' (matches upload.array('image', 5))
+            // Append each compressed image file
             imageFiles.forEach((file) => {
                 formData.append('image', file);
             });
 
             const res = await axios.post('/api/products/addproduct', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+                headers: { 'Content-Type': 'multipart/form-data' },
+                timeout: 60000, // 60 second timeout for mobile networks
             });
             console.log(res.data);
             alert('Product added successfully!');
-            e.target.reset();
+            // Reset form
             setPreviews([]);
             setImageFiles([]);
+            setProduct({
+                name: "",
+                description: "",
+                price: "",
+                category: categories?.[0]?._id || "",
+                condition: "New",
+            });
+            if (formRef.current) formRef.current.reset();
         } catch (err) {
-            console.log(err);
-            alert(err.response?.data?.message || 'Failed to add product');
+            console.error('Add product error:', err);
+            if (err.code === 'ECONNABORTED') {
+                alert('Upload timed out. Please try with fewer or smaller images.');
+            } else if (err.response?.status === 413) {
+                alert('Images are too large. Please select fewer or smaller images.');
+            } else {
+                alert(err.response?.data?.message || 'Failed to add product. Please try again.');
+            }
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -83,7 +185,7 @@ function AddProduct() {
 
                 {/* Form Card */}
                 <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
-                    <form className="p-8 lg:p-12 space-y-8" onSubmit={AddProductAPI}>
+                    <form ref={formRef} className="p-8 lg:p-12 space-y-8" onSubmit={AddProductAPI}>
                         {/* Basic Information */}
                         <div className="space-y-6">
                             <h2 className="text-xl font-bold text-gray-800 border-l-4 border-orange-500 pl-3">Basic Information</h2>
@@ -120,11 +222,11 @@ function AddProduct() {
                                     </select>
                                 </div>
                                 <div>
-                                    <label htmlFor="category" className="block text-sm font-semibold text-gray-700 mb-2">
+                                    <label htmlFor="condition" className="block text-sm font-semibold text-gray-700 mb-2">
                                         Condition
                                     </label>
                                     <select
-                                        id="category"
+                                        id="condition"
                                         className="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none bg-gray-50/50 appearance-none"
                                         value={product.condition}
                                         onChange={(e) => setProduct({...product , condition: e.target.value})}
@@ -188,10 +290,19 @@ function AddProduct() {
                                         accept="image/*"
                                         multiple
                                         onChange={handleImageChange}
+                                        disabled={isSubmitting}
                                     />
                                   
                                     <div className="space-y-1 text-center">
-                                        {previews.length > 0 ? (
+                                        {compressionStatus ? (
+                                            <div className="flex flex-col items-center gap-2 py-4">
+                                                <svg className="animate-spin h-8 w-8 text-orange-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                <p className="text-sm text-orange-600 font-medium">{compressionStatus}</p>
+                                            </div>
+                                        ) : previews.length > 0 ? (
                                             <div className="flex flex-wrap gap-3 justify-center">
                                                 {previews.map((src, idx) => (
                                                     <div key={idx} className="relative inline-block">
@@ -203,7 +314,7 @@ function AddProduct() {
                                                         </div>
                                                     </div>
                                                 ))}
-                                                <p className="w-full text-xs text-gray-500 mt-2">{imageFiles.length} image(s) selected — click to change</p>
+                                                <p className="w-full text-xs text-gray-500 mt-2">{imageFiles.length} image(s) optimized & ready — click to change</p>
                                             </div>
                                         ) : (
                                             <>
@@ -227,7 +338,8 @@ function AddProduct() {
                                                     </span>
                                                     <p className="pl-1">or drag and drop</p>
                                                 </div>
-                                                <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB (max 5 images)</p>
+                                                <p className="text-xs text-gray-500">PNG, JPG, HEIC — any format (max 5 images)</p>
+                                                <p className="text-xs text-gray-400">Images are auto-optimized for fast upload</p>
                                             </>
                                         )}
                                     </div>
@@ -239,9 +351,24 @@ function AddProduct() {
                         <div className="pt-6">
                             <button
                                 type="submit"
-                                className="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-all transform hover:-translate-y-1"
+                                disabled={isSubmitting}
+                                className={`w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white transition-all transform ${
+                                    isSubmitting
+                                        ? 'bg-orange-400 cursor-not-allowed'
+                                        : 'bg-orange-600 hover:bg-orange-700 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
+                                }`}
                             >
-                                Post Your Deal
+                                {isSubmitting ? (
+                                    <>
+                                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Uploading...
+                                    </>
+                                ) : (
+                                    'Post Your Deal'
+                                )}
                             </button>
                             <p className="mt-4 text-center text-xs text-gray-400">
                                 By posting, you agree to our Terms of Use and Community Guidelines.
